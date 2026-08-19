@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AppLayout } from './layouts/AppLayout'
 import { Dashboard } from './pages/Dashboard'
+import { Teams } from './pages/Teams'
 
 function App() {
   return (
@@ -8,7 +9,7 @@ function App() {
       <Routes>
         <Route path="/" element={<AppLayout />}>
           <Route index element={<Dashboard />} />
-          <Route path="teams" element={<div className="p-4 bg-white border border-slate-200 rounded-md">Teams Placeholder</div>} />
+          <Route path="teams" element={<Teams />} />
         </Route>
       </Routes>
     </BrowserRouter>
