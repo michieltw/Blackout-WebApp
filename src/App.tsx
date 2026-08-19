@@ -3,6 +3,7 @@ import { AppLayout } from './layouts/AppLayout'
 import { Dashboard } from './pages/Dashboard'
 import { Teams } from './pages/Teams'
 import { Organizations } from './pages/Organizations'
+import { Rosters } from './pages/Rosters'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="teams" element={<Teams />} />
           <Route path="organizations" element={<Organizations />} />
+          <Route path="rosters" element={<Rosters />} />
         </Route>
       </Routes>
     </BrowserRouter>
