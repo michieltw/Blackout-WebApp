@@ -4,6 +4,7 @@ import { Dashboard } from './pages/Dashboard'
 import { Teams } from './pages/Teams'
 import { Organizations } from './pages/Organizations'
 import { Rosters } from './pages/Rosters'
+import { PlayerProfiles } from './pages/PlayerProfiles'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="teams" element={<Teams />} />
           <Route path="organizations" element={<Organizations />} />
           <Route path="rosters" element={<Rosters />} />
+          <Route path="players" element={<PlayerProfiles />} />
         </Route>
       </Routes>
     </BrowserRouter>
