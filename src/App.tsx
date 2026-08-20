@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AppLayout } from './layouts/AppLayout'
 import { Dashboard } from './pages/Dashboard'
@@ -6,13 +7,23 @@ import { Organizations } from './pages/Organizations'
 import { Rosters } from './pages/Rosters'
 import { PlayerProfiles } from './pages/PlayerProfiles'
 import { Login } from './pages/Login'
+import { Signup } from './pages/Signup'
+import { RequireAuth } from './components/RequireAuth'
+import { useAuthStore } from './lib/store'
 
 function App() {
+  const initializeAuth = useAuthStore((state) => state.initializeAuth)
+
+  useEffect(() => {
+    initializeAuth()
+  }, [initializeAuth])
+
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={<AppLayout />}>
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/" element={<RequireAuth><AppLayout /></RequireAuth>}>
           <Route index element={<Dashboard />} />
           <Route path="teams" element={<Teams />} />
           <Route path="organizations" element={<Organizations />} />

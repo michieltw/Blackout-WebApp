@@ -1,8 +1,13 @@
 import { useState } from 'react'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { Button } from '@/components/ui/Button'
 import { supabase } from '@/lib/supabaseClient'
 
 export function Login() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const from = location.state?.from?.pathname || "/"
+
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -23,7 +28,8 @@ export function Login() {
 
       if (error) throw error
 
-      setMessage('Successfully logged in!')
+      setMessage('Successfully logged in! Redirecting...')
+      setTimeout(() => navigate(from, { replace: true }), 1000)
     } catch (err: any) {
       setError(err.message || 'An error occurred during login')
     } finally {
@@ -96,6 +102,13 @@ export function Login() {
             </Button>
           </div>
         </form>
+
+        <p className="text-center text-sm text-slate-600">
+          Don't have an account?{' '}
+          <Link to="/signup" className="font-semibold text-emerald-600 hover:text-emerald-500">
+            Sign up here
+          </Link>
+        </p>
       </div>
     </div>
   )
