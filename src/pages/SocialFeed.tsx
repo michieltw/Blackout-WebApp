@@ -8,18 +8,24 @@ type Announcement = Database['public']['Tables']['announcements']['Row']
 export function SocialFeed() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      const data = await fetchTableData('announcements')
-      // Sort by publish date descending to show newest first
-      const sortedData = (data || []).sort((a, b) => {
-        const dateA = a.publish_date || a.created_at || ''
-        const dateB = b.publish_date || b.created_at || ''
-        return new Date(dateB).getTime() - new Date(dateA).getTime()
-      })
-      setAnnouncements(sortedData)
-      setLoading(false)
+      try {
+        const data = await fetchTableData('announcements')
+        // Sort by publish date descending to show newest first
+        const sortedData = (data || []).sort((a, b) => {
+          const dateA = a.publish_date || a.created_at || ''
+          const dateB = b.publish_date || b.created_at || ''
+          return new Date(dateB).getTime() - new Date(dateA).getTime()
+        })
+        setAnnouncements(sortedData)
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch announcements')
+      } finally {
+        setLoading(false)
+      }
     }
     load()
   }, [])
@@ -59,6 +65,11 @@ export function SocialFeed() {
       </div>
 
       <div className="grid gap-6">
+        {error && (
+          <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-md">
+            {error}
+          </div>
+        )}
         {loading ? (
           <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm text-sm text-slate-500">
             Loading feed...

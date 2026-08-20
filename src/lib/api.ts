@@ -26,7 +26,7 @@ export async function fetchTableData<T extends TableNames>(
 export async function insertTableData<T extends TableNames>(
   table: T,
   payload: Database['public']['Tables'][T]['Insert'] | Database['public']['Tables'][T]['Insert'][]
-): Promise<Database['public']['Tables'][T]['Row'][] | null> {
+): Promise<Database['public']['Tables'][T]['Row'][]> {
   const { data, error } = await supabase
     .from(table as string)
     .insert(payload as any)

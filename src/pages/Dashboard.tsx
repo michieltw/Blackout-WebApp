@@ -8,6 +8,7 @@ type Team = Database['public']['Tables']['teams']['Row']
 export function Dashboard() {
   const [teams, setTeams] = useState<Team[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
