@@ -59,11 +59,11 @@ def main():
             if not cols:
                 continue
             cols_s = ",".join(cols)
-            cols_safe = "_".join(cols)
+            cols_safe = safe_name("_".join(cols))
             if idx.get("unique"):
-                ux_lines.append(f"CREATE UNIQUE INDEX IF NOT EXISTS ux_{tname}_{safe_name(cols_safe)} ON {tname} ({cols_s});")
+                ux_lines.append(f"CREATE UNIQUE INDEX IF NOT EXISTS ux_{tname}_{cols_safe} ON {tname} ({cols_s});")
             else:
-                idx_lines.append(f"CREATE INDEX IF NOT EXISTS idx_{tname}_{safe_name(cols_safe)} ON {tname} ({cols_s});")
+                idx_lines.append(f"CREATE INDEX IF NOT EXISTS idx_{tname}_{cols_safe} ON {tname} ({cols_s});")
 
         for col in t.get("columns", []):
             if "ref" not in col:

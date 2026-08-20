@@ -16,7 +16,7 @@ export async function fetchTableData<T extends TableNames>(
   const { data, error } = await query
 
   if (error) {
-    console.error(`Error fetching from ${table}:`, error)
+    console.error(`Error fetching from ${table}:`, error.message)
     return []
   }
 
@@ -33,7 +33,7 @@ export async function insertTableData<T extends TableNames>(
     .select()
 
   if (error) {
-    console.error(`Error inserting into ${table}:`, error)
+    console.error(`Error inserting into ${table}:`, error.message)
     return null
   }
 
