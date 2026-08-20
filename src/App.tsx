@@ -4,6 +4,8 @@ import { AppLayout } from './layouts/AppLayout'
 import { Dashboard } from './pages/Dashboard'
 import { Teams } from './pages/Teams'
 import { Organizations } from './pages/Organizations'
+import { SeasonTransitions } from './pages/SeasonTransitions'
+import { TeamDetails } from './pages/TeamDetails'
 import { Rosters } from './pages/Rosters'
 import { PlayerProfiles } from './pages/PlayerProfiles'
 import { Schedule } from './pages/Schedule'
@@ -31,7 +33,9 @@ function App() {
         <Route path="/" element={<RequireAuth><AppLayout /></RequireAuth>}>
           <Route index element={<Dashboard />} />
           <Route path="teams" element={<Teams />} />
+          <Route path="team-details" element={<TeamDetails />} />
           <Route path="organizations" element={<Organizations />} />
+          <Route path="season-transitions" element={<SeasonTransitions />} />
           <Route path="rosters" element={<Rosters />} />
           <Route path="players" element={<PlayerProfiles />} />
           <Route path="schedule" element={<Schedule />} />
