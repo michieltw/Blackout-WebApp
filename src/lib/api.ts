@@ -7,7 +7,7 @@ export async function fetchTableData<T extends TableNames>(
   table: T,
   matchParams?: Partial<Database['public']['Tables'][T]['Row']>
 ): Promise<Database['public']['Tables'][T]['Row'][]> {
-  let query = supabase.from(table).select('*')
+  let query = supabase.from(table as string).select('*')
 
   if (matchParams) {
     query = query.match(matchParams)
@@ -16,11 +16,11 @@ export async function fetchTableData<T extends TableNames>(
   const { data, error } = await query
 
   if (error) {
-    console.error(`Error fetching from ${table}. Query failed.`)
+    console.error(`Error fetching from ${table}:`, error.message)
     return []
   }
 
-  return data as unknown as Database['public']['Tables'][T]['Row'][]
+  return (data || []) as Database['public']['Tables'][T]['Row'][]
 }
 
 export async function insertTableData<T extends TableNames>(
@@ -28,14 +28,14 @@ export async function insertTableData<T extends TableNames>(
   payload: Database['public']['Tables'][T]['Insert'] | Database['public']['Tables'][T]['Insert'][]
 ): Promise<Database['public']['Tables'][T]['Row'][] | null> {
   const { data, error } = await supabase
-    .from(table)
+    .from(table as string)
     .insert(payload as any)
     .select()
 
   if (error) {
-    console.error(`Error inserting into ${table}. Operation failed.`)
+    console.error(`Error inserting into ${table}:`, error.message)
     return null
   }
 
-  return data as unknown as Database['public']['Tables'][T]['Row'][]
+  return (data || []) as Database['public']['Tables'][T]['Row'][]
 }
