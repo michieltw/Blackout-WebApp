@@ -16,7 +16,7 @@ export async function fetchTableData<T extends TableNames>(
   const { data, error } = await query
 
   if (error) {
-    console.error(`Error fetching from ${table}:`, error)
+    console.error(`Error fetching from ${String(table)}:`, error)
     return []
   }
 
@@ -29,11 +29,12 @@ export async function insertTableData<T extends TableNames>(
 ): Promise<Database['public']['Tables'][T]['Row'][] | null> {
   const { data, error } = await supabase
     .from(table)
-    .insert(payload as any)
+    // @ts-expect-error - Supabase generic insert types cannot be statically resolved by TypeScript here
+    .insert(payload)
     .select()
 
   if (error) {
-    console.error(`Error inserting into ${table}:`, error)
+    console.error(`Error inserting into ${String(table)}:`, error)
     return null
   }
 
