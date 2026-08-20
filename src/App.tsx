@@ -6,6 +6,7 @@ import { Teams } from './pages/Teams'
 import { Organizations } from './pages/Organizations'
 import { Rosters } from './pages/Rosters'
 import { PlayerProfiles } from './pages/PlayerProfiles'
+import { Schedule } from './pages/Schedule'
 import { Login } from './pages/Login'
 import { Signup } from './pages/Signup'
 import { RequireAuth } from './components/RequireAuth'
@@ -29,6 +30,7 @@ function App() {
           <Route path="organizations" element={<Organizations />} />
           <Route path="rosters" element={<Rosters />} />
           <Route path="players" element={<PlayerProfiles />} />
+          <Route path="schedule" element={<Schedule />} />
         </Route>
       </Routes>
     </BrowserRouter>
