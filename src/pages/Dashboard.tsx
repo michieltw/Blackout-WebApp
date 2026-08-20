@@ -12,7 +12,7 @@ export function Dashboard() {
   useEffect(() => {
     async function load() {
       const data = await fetchTableData('teams')
-      setTeams((data || []).slice(0, 5))
+      setTeams(data || [])
       setLoading(false)
     }
     load()
@@ -39,7 +39,7 @@ export function Dashboard() {
                 <TableHead>Status</TableHead>
               </TableHeader>
               <TableBody>
-                {(teams || []).map((team) => (
+                {(teams || []).slice(0, 5).map((team) => (
                   <TableRow key={team.id}>
                     <TableCell>{team.id}</TableCell>
                     <TableCell className="font-medium text-slate-900">{team?.name || 'Unnamed'}</TableCell>
