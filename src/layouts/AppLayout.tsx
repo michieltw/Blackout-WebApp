@@ -13,6 +13,8 @@ export function AppLayout() {
           <nav className="flex items-center gap-4 text-sm font-medium">
             <Link to="/" className="text-slate-600 hover:text-slate-900 transition-colors">Dashboard</Link>
             <Link to="/teams" className="text-slate-600 hover:text-slate-900 transition-colors">Teams</Link>
+            <Link to="/team-details" className="text-slate-600 hover:text-slate-900 transition-colors">Team Details</Link>
+            <Link to="/season-transitions" className="text-slate-600 hover:text-slate-900 transition-colors">Transitions</Link>
             <Link to="/messages" className="text-slate-600 hover:text-slate-900 transition-colors">Messages</Link>
             <Link to="/live" className="text-slate-600 hover:text-slate-900 transition-colors">Live</Link>
             <Link to="/leaderboards" className="text-slate-600 hover:text-slate-900 transition-colors">Leaderboards</Link>
