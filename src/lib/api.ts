@@ -17,7 +17,7 @@ export async function fetchTableData<T extends TableNames>(
 
   if (error) {
     console.error(`Error fetching from ${table}:`, error)
-    return []
+    throw error
   }
 
   return data as unknown as Database['public']['Tables'][T]['Row'][]
@@ -26,7 +26,7 @@ export async function fetchTableData<T extends TableNames>(
 export async function insertTableData<T extends TableNames>(
   table: T,
   payload: Database['public']['Tables'][T]['Insert'] | Database['public']['Tables'][T]['Insert'][]
-): Promise<Database['public']['Tables'][T]['Row'][] | null> {
+): Promise<Database['public']['Tables'][T]['Row'][]> {
   const { data, error } = await supabase
     .from(table)
     .insert(payload as any)
@@ -34,7 +34,7 @@ export async function insertTableData<T extends TableNames>(
 
   if (error) {
     console.error(`Error inserting into ${table}:`, error)
-    return null
+    throw error
   }
 
   return data as unknown as Database['public']['Tables'][T]['Row'][]
