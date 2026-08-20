@@ -46,7 +46,7 @@ describe('api', () => {
       expect(consoleSpy).not.toHaveBeenCalled()
     })
 
-    it('returns null and logs an error when the supabase insert fails', async () => {
+    it('returns an empty array and logs an error when the supabase insert fails', async () => {
       const mockError = new Error('Insert failed')
 
       const mockSelect = vi.fn().mockReturnValue(
@@ -65,7 +65,7 @@ describe('api', () => {
       expect(supabase.from).toHaveBeenCalledWith('persons')
       expect(mockInsert).toHaveBeenCalledWith(payload)
       expect(mockSelect).toHaveBeenCalled()
-      expect(result).toBeNull()
+      expect(result).toEqual([])
       expect(consoleSpy).toHaveBeenCalledWith('Error inserting into persons:', mockError.message)
     })
   })
