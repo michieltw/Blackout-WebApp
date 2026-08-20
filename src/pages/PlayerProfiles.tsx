@@ -9,12 +9,18 @@ type PlayerProfile = Database['public']['Tables']['player_profiles']['Row']
 export function PlayerProfiles() {
   const [profiles, setProfiles] = useState<PlayerProfile[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      const data = await fetchTableData('player_profiles')
-      setProfiles(data || [])
-      setLoading(false)
+      try {
+        const data = await fetchTableData('player_profiles')
+        setProfiles(data || [])
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch player profiles')
+      } finally {
+        setLoading(false)
+      }
     }
     load()
   }, [])
@@ -28,6 +34,11 @@ export function PlayerProfiles() {
 
       <div className="grid gap-6">
         <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+          {error && (
+            <div className="mb-4 text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-md">
+              {error}
+            </div>
+          )}
           {loading ? (
             <div className="text-sm text-slate-500">Loading data...</div>
           ) : profiles.length === 0 ? (

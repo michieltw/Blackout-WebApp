@@ -9,16 +9,22 @@ type Game = Database['public']['Tables']['games']['Row']
 export function Schedule() {
   const [games, setGames] = useState<Game[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      const data = await fetchTableData('games')
-      // Sort by scheduled time descending for better display
-      const sortedData = (data || []).sort((a, b) =>
-        new Date(b.scheduled_time).getTime() - new Date(a.scheduled_time).getTime()
-      )
-      setGames(sortedData)
-      setLoading(false)
+      try {
+        const data = await fetchTableData('games')
+        // Sort by scheduled time descending for better display
+        const sortedData = (data || []).sort((a, b) =>
+          new Date(b.scheduled_time).getTime() - new Date(a.scheduled_time).getTime()
+        )
+        setGames(sortedData)
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch schedule')
+      } finally {
+        setLoading(false)
+      }
     }
     load()
   }, [])
@@ -47,6 +53,11 @@ export function Schedule() {
 
       <div className="grid gap-6">
         <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+          {error && (
+            <div className="mb-4 text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-md">
+              {error}
+            </div>
+          )}
           {loading ? (
             <div className="text-sm text-slate-500">Loading data...</div>
           ) : games.length === 0 ? (
