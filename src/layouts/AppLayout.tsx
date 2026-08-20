@@ -13,6 +13,9 @@ export function AppLayout() {
           <nav className="flex items-center gap-4 text-sm font-medium">
             <Link to="/" className="text-slate-600 hover:text-slate-900 transition-colors">Dashboard</Link>
             <Link to="/teams" className="text-slate-600 hover:text-slate-900 transition-colors">Teams</Link>
+            <Link to="/messages" className="text-slate-600 hover:text-slate-900 transition-colors">Messages</Link>
+            <Link to="/live" className="text-slate-600 hover:text-slate-900 transition-colors">Live</Link>
+            <Link to="/leaderboards" className="text-slate-600 hover:text-slate-900 transition-colors">Leaderboards</Link>
             <div className="w-8 h-8 rounded-full bg-slate-200 border border-slate-300"></div>
           </nav>
         </div>
