@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { fetchTableData } from './api'
+import { fetchTableData, insertTableData } from './api'
 import { supabase } from './supabaseClient'
 
 vi.mock('./supabaseClient', () => {
@@ -11,6 +11,65 @@ vi.mock('./supabaseClient', () => {
 })
 
 describe('api', () => {
+  describe('insertTableData', () => {
+    let consoleSpy: any
+
+    beforeEach(() => {
+      consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      vi.clearAllMocks()
+    })
+
+    afterEach(() => {
+      consoleSpy.mockRestore()
+    })
+
+    it('returns inserted data on success', async () => {
+      const mockData = [{ id: 1, name: 'John Doe' }]
+
+      const mockSelect = vi.fn().mockReturnValue(
+        Promise.resolve({ data: mockData, error: null })
+      )
+
+      const mockInsert = vi.fn().mockReturnValue({ select: mockSelect })
+
+      vi.mocked(supabase.from).mockReturnValue({
+        insert: mockInsert
+      } as any)
+
+      const payload = { name: 'John Doe' }
+      const result = await insertTableData('persons' as any, payload as any)
+
+      expect(supabase.from).toHaveBeenCalledWith('persons')
+      expect(mockInsert).toHaveBeenCalledWith(payload)
+      expect(mockSelect).toHaveBeenCalled()
+      expect(result).toEqual(mockData)
+      expect(consoleSpy).not.toHaveBeenCalled()
+    })
+
+    it('returns null and logs an error when the supabase insert fails', async () => {
+      const mockError = new Error('Insert failed')
+
+      const mockSelect = vi.fn().mockReturnValue(
+        Promise.resolve({ data: null, error: mockError })
+      )
+
+      const mockInsert = vi.fn().mockReturnValue({ select: mockSelect })
+
+      vi.mocked(supabase.from).mockReturnValue({
+        insert: mockInsert
+      } as any)
+
+      const payload = { name: 'John Doe' }
+      const result = await insertTableData('persons' as any, payload as any)
+
+      expect(supabase.from).toHaveBeenCalledWith('persons')
+      expect(mockInsert).toHaveBeenCalledWith(payload)
+      expect(mockSelect).toHaveBeenCalled()
+      expect(result).toBeNull()
+      expect(consoleSpy).toHaveBeenCalledWith('Error inserting into persons:', mockError.message)
+    })
+  })
+
   describe('fetchTableData', () => {
     let consoleSpy: any
 
@@ -40,7 +99,7 @@ describe('api', () => {
       expect(supabase.from).toHaveBeenCalledWith('persons')
       expect(mockSelect).toHaveBeenCalledWith('*')
       expect(result).toEqual([])
-      expect(consoleSpy).toHaveBeenCalledWith('Error fetching from persons:', mockError)
+      expect(consoleSpy).toHaveBeenCalledWith('Error fetching from persons:', mockError.message)
     })
   })
 })
