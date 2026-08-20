@@ -8,6 +8,9 @@ import { Rosters } from './pages/Rosters'
 import { PlayerProfiles } from './pages/PlayerProfiles'
 import { Schedule } from './pages/Schedule'
 import { SocialFeed } from './pages/SocialFeed'
+import { Messages } from './pages/Messages'
+import { LiveGameTracking } from './pages/LiveGameTracking'
+import { Leaderboards } from './pages/Leaderboards'
 import { Login } from './pages/Login'
 import { Signup } from './pages/Signup'
 import { RequireAuth } from './components/RequireAuth'
@@ -33,6 +36,9 @@ function App() {
           <Route path="players" element={<PlayerProfiles />} />
           <Route path="schedule" element={<Schedule />} />
           <Route path="feed" element={<SocialFeed />} />
+          <Route path="messages" element={<Messages />} />
+          <Route path="live" element={<LiveGameTracking />} />
+          <Route path="leaderboards" element={<Leaderboards />} />
         </Route>
       </Routes>
     </BrowserRouter>
