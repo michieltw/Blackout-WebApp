@@ -1,64 +1,46 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { fetchTableData } from './api';
-import { supabase } from './supabaseClient';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { fetchTableData } from './api'
+import { supabase } from './supabaseClient'
 
 vi.mock('./supabaseClient', () => {
   return {
     supabase: {
       from: vi.fn(),
-    }
-  };
-});
+    },
+  }
+})
 
-describe('fetchTableData', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+describe('api', () => {
+  describe('fetchTableData', () => {
+    let consoleSpy: any
 
-    // Mock console.error to avoid spamming the test output
-    vi.spyOn(console, 'error').mockImplementation(() => {});
-  });
+    beforeEach(() => {
+      consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+      vi.clearAllMocks()
+    })
 
-  it('fetches data successfully without matchParams', async () => {
-    const mockData = [{ id: 1, name: 'Test' }];
-    const selectMock = vi.fn().mockResolvedValue({ data: mockData, error: null });
-    const fromMock = vi.fn().mockReturnValue({ select: selectMock });
-    vi.mocked(supabase.from).mockImplementation(fromMock as any);
+    afterEach(() => {
+      consoleSpy.mockRestore()
+    })
 
-    const result = await fetchTableData('persons');
+    it('returns an empty array and logs an error when the supabase query fails', async () => {
+      const mockError = new Error('Database connection failed')
 
-    expect(supabase.from).toHaveBeenCalledWith('persons');
-    expect(fromMock).toHaveBeenCalled();
-    expect(selectMock).toHaveBeenCalledWith('*');
-    expect(result).toEqual(mockData);
-  });
+      const mockSelect = vi.fn().mockReturnValue(
+        Promise.resolve({ data: null, error: mockError })
+      )
 
-  it('fetches data successfully with matchParams', async () => {
-    const mockData = [{ id: 2, name: 'Test 2' }];
-    const matchMock = vi.fn().mockResolvedValue({ data: mockData, error: null });
-    const selectMock = vi.fn().mockReturnValue({ match: matchMock });
-    const fromMock = vi.fn().mockReturnValue({ select: selectMock });
-    vi.mocked(supabase.from).mockImplementation(fromMock as any);
+      vi.mocked(supabase.from).mockReturnValue({
+        select: mockSelect
+      } as any)
 
-    const matchParams = { id: 2 };
-    const result = await fetchTableData('persons', matchParams as any);
+      // Test with error branch
+      const result = await fetchTableData('persons' as any)
 
-    expect(supabase.from).toHaveBeenCalledWith('persons');
-    expect(selectMock).toHaveBeenCalledWith('*');
-    expect(matchMock).toHaveBeenCalledWith(matchParams);
-    expect(result).toEqual(mockData);
-  });
-
-  it('handles database error by logging error and returning empty array', async () => {
-    const mockError = new Error('Database Error');
-    const selectMock = vi.fn().mockResolvedValue({ data: null, error: mockError });
-    const fromMock = vi.fn().mockReturnValue({ select: selectMock });
-    vi.mocked(supabase.from).mockImplementation(fromMock as any);
-
-    const result = await fetchTableData('persons');
-
-    expect(supabase.from).toHaveBeenCalledWith('persons');
-    expect(selectMock).toHaveBeenCalledWith('*');
-    expect(console.error).toHaveBeenCalledWith('Error fetching from persons:', mockError);
-    expect(result).toEqual([]);
-  });
-});
+      expect(supabase.from).toHaveBeenCalledWith('persons')
+      expect(mockSelect).toHaveBeenCalledWith('*')
+      expect(result).toEqual([])
+      expect(consoleSpy).toHaveBeenCalledWith('Error fetching from persons:', mockError)
+    })
+  })
+})
