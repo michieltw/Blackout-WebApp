@@ -1,45 +1,50 @@
-# Ice Hockey Ecosystem WebApp - Handover Document
+# Developer Handover Document: Part 2 Journey Continuation
 
-## Current Status
+Hello, and welcome! You are stepping into a mature and well-architected React, Vite, and Supabase project for an Ice Hockey Ecosystem WebApp. The previous AI has made significant progress, but as its context window filled up, it gracefully stopped to hand the baton to you.
 
-We have successfully completed the foundation and a significant portion of the core features outlined in the `DEVELOPER_ROADMAP.md`.
+## Current State
 
-**Completed Phases:**
-* **Phase 1: Foundation & Backend Bootstrapping:** Database schema and Supabase configurations are established.
-* **Phase 2: Frontend Bootstrapping & Core Architecture:** Vite + React + TypeScript setup is complete. Tailwind CSS is configured according to strict project constraints (`slate`, `emerald`, `amber`). The generic API data access layer (`src/lib/api.ts`) is fully functional.
-* **Phase 3: Core Ecosystem Features:**
-  * **Auth & Onboarding (Step 7):** Basic UI flows for Login (`src/pages/Login.tsx`) and Signup (`src/pages/Signup.tsx`) are implemented. We established a Zustand store (`src/lib/store.ts`) for session state and a `RequireAuth` component for route protection. Crucially, the signup flow handles Supabase auth *and* properly inserts related records into the custom `persons` and `users` tables.
-  * **CRUD Views (Steps 8-10):** We built out data-fetching dashboard views for:
-    * `Teams` (`src/pages/Teams.tsx`)
-    * `Organizations` (`src/pages/Organizations.tsx`)
-    * `Rosters` (`src/pages/Rosters.tsx`)
-    * `PlayerProfiles` (`src/pages/PlayerProfiles.tsx`)
-    * `Schedule` (`src/pages/Schedule.tsx`)
-* **Phase 4: Social Hub & Gamification (Started):**
-  * **Social Feed (Step 11):** Implemented the `SocialFeed.tsx` view fetching from the `announcements` table.
+We are currently working our way through `DEVELOPER_ROADMAP_PART2.md`.
+So far in **Phase 6: Extended League & Club Management**, the following has been implemented:
 
-All built views have been integrated into the `react-router-dom` configuration in `src/App.tsx`.
+*   **Sub-Phase 1: Leagues, Seasons, & Divisions**
+    *   Created `src/pages/Leagues.tsx` for `leagues`.
+    *   Created `src/pages/Seasons.tsx` for `seasons`.
+    *   Created `src/pages/Divisions.tsx` for `divisions`.
+    *   Created `src/pages/Clubs.tsx` for `clubs`.
+    *   Created `src/pages/Conferences.tsx` for `conferences`.
+    *   Created `src/pages/SeasonTransitions.tsx` for `season_current`, `season_archives`, `org_seasons`, and `season_phases`.
+*   **Sub-Phase 2: Team Details & Staff Management**
+    *   Created `src/pages/TeamDetails.tsx` for `team_profiles`, `farm_teams`, and `team_staff`.
 
-## Key Technical Decisions & Constraints Enforced
+All of these new pages fetch data from the Supabase backend utilizing the robust `fetchTableData` function from `src/lib/api.ts`. They display this data using standardized UI components (e.g., `<Table>`) and include proper loading states and error fallbacks. They are also integrated into the routing in `src/App.tsx` and the main navigation in `src/layouts/AppLayout.tsx`.
 
-1. **Defensive Programming:** The entire frontend is built to never crash on missing data. You will see extensive use of optional chaining (e.g., `team?.status`) and fallback arrays (`(teams || []).map()`) across all components. **Never use hardcoded mock data in the production code.**
-2. **Styling Rules:** We strictly adhere to the Tailwind `slate` palette for general layout, using `emerald-50/700` for positive/active statuses and `amber-50/700` for neutral/inactive statuses. We extensively utilize the `tabular-nums` utility class for all scores, IDs, and timestamps to prevent layout shifting.
-3. **Data Fetching:** Do not write raw Supabase queries inside components. Always use the typed generic wrappers `fetchTableData` and `insertTableData` provided in `src/lib/api.ts`.
-4. **State Management:** Global state, specifically Authentication, is managed via Zustand (`src/lib/store.ts`). Use `useAuthStore` to access session data.
+## Your Next Steps
 
-## Next Steps for the Incoming Developer
+Your immediate objective is to pick up where Phase 6 left off and then continue into Phase 7, progressing down the roadmap until your context window dictates another handover.
 
-You should pick up from the remainder of **Phase 4: Social Hub & Gamification** and move towards **Phase 5**.
+1.  **Familiarize yourself with the repository:**
+    *   Read `DEVELOPER_ROADMAP.md` (for historical context of phases 1-5).
+    *   Read `DEVELOPER_ROADMAP_PART2.md` (your primary directive).
+    *   Review `src/lib/api.ts` to understand how data fetching/insertion/updating works (`fetchTableData`, `insertTableData`, `updateTableData`).
+    *   Review `supabase_schema.sql` to understand the database structure for the entities you are about to implement.
 
-1. **Complete Step 11 (Messages):** The current Social Feed only pulls from `announcements`. Expand this or create a new view to handle direct/team `messages`.
-2. **Step 12: Live Event Tracking & Play-by-Play:** Build the UI for staff to input `game_events`. This is a complex view that needs to interact heavily with the `games` and `game_events` tables.
-3. **Step 13: Gamification & Leaderboards:** Develop dashboards for player/team statistics and leaderboards, leveraging the data denormalized by backend triggers.
-4. **Step 14 & 15: Defensive & Styling Audits:** Perform a final sweep to ensure no mock data remains and that all numbers strictly use `tabular-nums`.
-5. **Step 16: CI/CD:** Finalize deployment pipelines.
+2.  **Continue Phase 6: Advanced Roster & Lineup Management**
+    *   Your first implementation task is to build views for dynamic lineup tools and player status tracking.
+    *   Relevant tables: `lineups`, `lineup_players`, `lineup_units`, `lineup_unit_players`.
+    *   Relevant tables for player status: `loan_players`, `waivers`, `transfers`, `player_transfers`, `player_movement_log`.
+    *   Create the necessary React components (e.g., `src/pages/LineupManagement.tsx` and `src/pages/PlayerMovement.tsx`), implement data fetching, handle edge cases, and add routes in `App.tsx` and links in `AppLayout.tsx`.
 
-## Project Execution Commands
-* Start local server: `npm run dev`
-* Typecheck and build: `npm run build`
-* Lint: `npm run lint`
+3.  **Proceed to Phase 7: Tournaments, Playoffs, & Events**
+    *   Once Phase 6 is entirely complete, move onto Tournament & Bracket management, Events & Venues, and Ice Time Scheduling as outlined in `DEVELOPER_ROADMAP_PART2.md`.
 
-Good luck!
+## Crucial Reminders & Rules
+
+*   **Defensive Programming:** NEVER use hardcoded mock data. ALWAYS use optional chaining (e.g., `player?.name`) and fallback arrays (e.g., `(data || []).map()`) to avoid React render crashes.
+*   **Data Fetching:** Strictly rely on `fetchTableData`, `insertTableData`, and `updateTableData`. Do not wrap calls to these API utility functions in generic `try...catch` blocks within the render functions, as they already catch and handle errors internally, returning `[]` or fallback data. Instead, check for empty arrays or nulls.
+*   **Styling:** Follow the existing Tailwind CSS `slate` palette rules. Ensure you use `tabular-nums` for any rendering of scores, numbers, or IDs.
+*   **TypeScript safety:** Fix TypeScript errors robustly. If using generic `.insert()` or `.update()` calls with mapped types causes deep inference issues, use `// @ts-expect-error` gracefully over generic `any` casting.
+*   **Routing/Auth:** The `RequireAuth` component currently protects routes. For local testing or Playwright verification, do NOT modify `RequireAuth.tsx`. Instead, inject a mock Zustand session into `localStorage('auth-storage')` before navigation.
+*   **Planning First:** Always use the deep planning mode: research, ask questions, draft an execution plan (`set_plan`), get a review, and stick to the pre-commit steps.
+
+Good luck, and build an incredible web app!
