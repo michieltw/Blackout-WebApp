@@ -12,17 +12,45 @@ export function Dashboard() {
 
   useEffect(() => {
     async function load() {
-      try {
-        const data = await fetchTableData('teams')
-        setTeams(data || [])
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch teams')
-      } finally {
-        setLoading(false)
-      }
+      const data = await fetchTableData('teams')
+      setTeams((data || []).slice(0, 5))
+      setLoading(false)
     }
     load()
   }, [])
+
+  const renderTeamsTable = () => {
+    if (loading) {
+      return <div className="text-sm text-slate-500">Loading data...</div>
+    }
+
+    if (teams.length === 0) {
+      return <div className="text-sm text-slate-500">No teams found. Database might be empty.</div>
+    }
+
+    return (
+      <Table>
+        <TableHeader>
+          <TableHead>ID</TableHead>
+          <TableHead>Team Name</TableHead>
+          <TableHead>Status</TableHead>
+        </TableHeader>
+        <TableBody>
+          {(teams || []).slice(0, 5).map((team) => (
+            <TableRow key={team.id}>
+              <TableCell>{team.id}</TableCell>
+              <TableCell className="font-medium text-slate-900">{team?.name || 'Unnamed'}</TableCell>
+              <TableCell>
+                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                  {team?.status || 'Active'}
+                </span>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -33,11 +61,7 @@ export function Dashboard() {
       <div className="grid gap-6">
         <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
           <h2 className="text-lg font-semibold mb-4 text-slate-800">Active Teams</h2>
-          {error && (
-            <div className="mb-4 text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-md">
-              {error}
-            </div>
-          )}
+          {renderTeamsTable()}
           {loading ? (
             <div className="text-sm text-slate-500">Loading data...</div>
           ) : teams.length === 0 ? (
@@ -50,7 +74,7 @@ export function Dashboard() {
                 <TableHead>Status</TableHead>
               </TableHeader>
               <TableBody>
-                {(teams || []).slice(0, 5).map((team) => (
+                {(teams || []).map((team) => (
                   <TableRow key={team.id}>
                     <TableCell>{team.id}</TableCell>
                     <TableCell className="font-medium text-slate-900">{team?.name || 'Unnamed'}</TableCell>
