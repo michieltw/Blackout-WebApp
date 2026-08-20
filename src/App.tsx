@@ -6,6 +6,8 @@ import { Teams } from './pages/Teams'
 import { Organizations } from './pages/Organizations'
 import { SeasonTransitions } from './pages/SeasonTransitions'
 import { TeamDetails } from './pages/TeamDetails'
+import { LineupManagement } from './pages/LineupManagement'
+import { PlayerMovement } from './pages/PlayerMovement'
 import { Rosters } from './pages/Rosters'
 import { PlayerProfiles } from './pages/PlayerProfiles'
 import { Schedule } from './pages/Schedule'
@@ -34,6 +36,8 @@ function App() {
           <Route index element={<Dashboard />} />
           <Route path="teams" element={<Teams />} />
           <Route path="team-details" element={<TeamDetails />} />
+          <Route path="lineups" element={<LineupManagement />} />
+          <Route path="player-movement" element={<PlayerMovement />} />
           <Route path="organizations" element={<Organizations />} />
           <Route path="season-transitions" element={<SeasonTransitions />} />
           <Route path="rosters" element={<Rosters />} />
