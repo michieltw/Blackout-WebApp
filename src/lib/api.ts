@@ -34,7 +34,7 @@ export async function insertTableData<T extends TableNames>(
 
   if (error) {
     console.error(`Error inserting into ${table}:`, error.message)
-    return null
+    return []
   }
 
   return (data || []) as Database['public']['Tables'][T]['Row'][]
