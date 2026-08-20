@@ -10,6 +10,8 @@ import { LineupManagement } from './pages/LineupManagement'
 import { PlayerMovement } from './pages/PlayerMovement'
 import { Tournaments } from './pages/Tournaments'
 import { Playoffs } from './pages/Playoffs'
+import { Venues } from './pages/Venues'
+import { Events } from './pages/Events'
 import { Rosters } from './pages/Rosters'
 import { PlayerProfiles } from './pages/PlayerProfiles'
 import { Schedule } from './pages/Schedule'
@@ -42,6 +44,8 @@ function App() {
           <Route path="player-movement" element={<PlayerMovement />} />
           <Route path="tournaments" element={<Tournaments />} />
           <Route path="playoffs" element={<Playoffs />} />
+          <Route path="venues" element={<Venues />} />
+          <Route path="events" element={<Events />} />
           <Route path="organizations" element={<Organizations />} />
           <Route path="season-transitions" element={<SeasonTransitions />} />
           <Route path="rosters" element={<Rosters />} />
