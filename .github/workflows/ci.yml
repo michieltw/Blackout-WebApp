@@ -22,4 +22,6 @@ jobs:
 
       - name: Verify migrations
         run: |
+          # Workaround for runner port collisions
+          sed -i 's/54322/54320/g' supabase/config.toml && sed -i 's/shadow_port = 54320/shadow_port = 54322/g' supabase/config.toml
           supabase db start
