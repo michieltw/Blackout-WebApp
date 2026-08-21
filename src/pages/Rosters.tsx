@@ -5,17 +5,36 @@ import { Table, TableHeader, TableHead, TableBody, TableRow, TableCell } from '@
 import { Button } from '@/components/ui/Button'
 
 type RosterPlayer = Database['public']['Tables']['rosters']['Row']
+type RosterPlayerDetailed = Database['public']['Tables']['roster_players']['Row']
+type TeamSeasonRoster = Database['public']['Tables']['team_season_rosters']['Row']
+type TeamManager = Database['public']['Tables']['team_managers']['Row']
 
 export function Rosters() {
   const [rosters, setRosters] = useState<RosterPlayer[]>([])
+  const [rosterPlayersDetailed, setRosterPlayersDetailed] = useState<RosterPlayerDetailed[]>([])
+  const [teamSeasonRosters, setTeamSeasonRosters] = useState<TeamSeasonRoster[]>([])
+  const [teamManagers, setTeamManagers] = useState<TeamManager[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
       try {
-        const data = await fetchTableData('rosters')
-        setRosters(data || [])
+        const [
+          rostersData,
+          rosterPlayersDetailedData,
+          teamSeasonRostersData,
+          teamManagersData
+        ] = await Promise.all([
+          fetchTableData('rosters'),
+          fetchTableData('roster_players'),
+          fetchTableData('team_season_rosters'),
+          fetchTableData('team_managers')
+        ])
+        setRosters(rostersData || [])
+        setRosterPlayersDetailed(rosterPlayersDetailedData || [])
+        setTeamSeasonRosters(teamSeasonRostersData || [])
+        setTeamManagers(teamManagersData || [])
       } catch (err: any) {
         setError(err.message || 'Failed to fetch rosters')
       } finally {
@@ -98,6 +117,104 @@ export function Rosters() {
             </Table>
           )}
         </div>
+          {/* Team Managers */}
+          <div className="grid gap-4 mt-8">
+            <h2 className="text-lg font-semibold text-slate-800">Team Managers</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+              {teamManagers.length === 0 ? (
+                <div className="text-sm text-slate-500">No team managers found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Team ID</TableHead>
+                    <TableHead>User ID</TableHead>
+                    <TableHead>Role</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {(teamManagers || []).map((manager) => (
+                      <TableRow key={manager.id}>
+                        <TableCell className="tabular-nums">{manager.id}</TableCell>
+                        <TableCell className="tabular-nums">{manager.team_id}</TableCell>
+                        <TableCell className="tabular-nums">{manager.user_id}</TableCell>
+                        <TableCell className="capitalize text-slate-600">{manager.role || '-'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
+
+          {/* Team Season Rosters */}
+          <div className="grid gap-4 mt-8">
+            <h2 className="text-lg font-semibold text-slate-800">Team Season Rosters</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+              {teamSeasonRosters.length === 0 ? (
+                <div className="text-sm text-slate-500">No season rosters found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Team ID</TableHead>
+                    <TableHead>Season ID</TableHead>
+                    <TableHead>Player Count</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {(teamSeasonRosters || []).map((sr) => (
+                      <TableRow key={sr.id}>
+                        <TableCell className="tabular-nums">{sr.id}</TableCell>
+                        <TableCell className="tabular-nums">{sr.team_id}</TableCell>
+                        <TableCell className="tabular-nums">{sr.season_id}</TableCell>
+                        <TableCell className="tabular-nums">{sr.player_count || '-'}</TableCell>
+                        <TableCell className="capitalize text-slate-600">{sr.roster_status || '-'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
+
+          {/* Detailed Roster Players */}
+          <div className="grid gap-4 mt-8">
+            <h2 className="text-lg font-semibold text-slate-800">Roster Players (Detailed)</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+              {rosterPlayersDetailed.length === 0 ? (
+                <div className="text-sm text-slate-500">No detailed roster players found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Roster ID</TableHead>
+                    <TableHead>Player ID</TableHead>
+                    <TableHead>Jersey #</TableHead>
+                    <TableHead>Position</TableHead>
+                    <TableHead>Active</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {(rosterPlayersDetailed || []).map((rp) => (
+                      <TableRow key={rp.id}>
+                        <TableCell className="tabular-nums">{rp.id}</TableCell>
+                        <TableCell className="tabular-nums">{rp.roster_id}</TableCell>
+                        <TableCell className="tabular-nums">{rp.player_id}</TableCell>
+                        <TableCell className="tabular-nums">{rp.jersey_number || '-'}</TableCell>
+                        <TableCell className="text-slate-600">{rp.position}</TableCell>
+                        <TableCell>
+                          {rp.is_active ? (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">Yes</span>
+                          ) : (
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200">No</span>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
       </div>
     </div>
   )
