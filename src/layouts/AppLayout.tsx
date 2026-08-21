@@ -16,6 +16,15 @@ export function AppLayout() {
             <Link to="/team-details" className="text-slate-600 hover:text-slate-900 transition-colors">Team Details</Link>
             <Link to="/lineups" className="text-slate-600 hover:text-slate-900 transition-colors">Lineups</Link>
             <Link to="/player-movement" className="text-slate-600 hover:text-slate-900 transition-colors">Player Movement</Link>
+            <Link to="/officiating" className="text-slate-600 hover:text-slate-900 transition-colors">Officiating</Link>
+            <Link to="/rules-and-discipline" className="text-slate-600 hover:text-slate-900 transition-colors">Discipline</Link>
+            <Link to="/player-progression" className="text-slate-600 hover:text-slate-900 transition-colors">Progression</Link>
+            <Link to="/drafts-and-financials" className="text-slate-600 hover:text-slate-900 transition-colors">Financials</Link>
+            <Link to="/statistics" className="text-slate-600 hover:text-slate-900 transition-colors">Statistics</Link>
+            <Link to="/achievements" className="text-slate-600 hover:text-slate-900 transition-colors">Achievements</Link>
+            <Link to="/fan-base" className="text-slate-600 hover:text-slate-900 transition-colors">Fans</Link>
+            <Link to="/commerce" className="text-slate-600 hover:text-slate-900 transition-colors">Commerce</Link>
+            <Link to="/sponsorships" className="text-slate-600 hover:text-slate-900 transition-colors">Sponsorships</Link>
             <Link to="/season-transitions" className="text-slate-600 hover:text-slate-900 transition-colors">Transitions</Link>
             <Link to="/messages" className="text-slate-600 hover:text-slate-900 transition-colors">Messages</Link>
             <Link to="/live" className="text-slate-600 hover:text-slate-900 transition-colors">Live</Link>
