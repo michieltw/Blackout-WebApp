@@ -12,6 +12,11 @@ import { Officiating } from './pages/Officiating'
 import { RulesAndDiscipline } from './pages/RulesAndDiscipline'
 import { PlayerProgression } from './pages/PlayerProgression'
 import { DraftsAndFinancials } from './pages/DraftsAndFinancials'
+import { DeepStatistics } from './pages/DeepStatistics'
+import { AchievementsAndMilestones } from './pages/AchievementsAndMilestones'
+import { FanBase } from './pages/FanBase'
+import { Commerce } from './pages/Commerce'
+import { Sponsorships } from './pages/Sponsorships'
 import { Rosters } from './pages/Rosters'
 import { PlayerProfiles } from './pages/PlayerProfiles'
 import { Schedule } from './pages/Schedule'
@@ -46,6 +51,11 @@ function App() {
           <Route path="rules-and-discipline" element={<RulesAndDiscipline />} />
           <Route path="player-progression" element={<PlayerProgression />} />
           <Route path="drafts-and-financials" element={<DraftsAndFinancials />} />
+          <Route path="statistics" element={<DeepStatistics />} />
+          <Route path="achievements" element={<AchievementsAndMilestones />} />
+          <Route path="fan-base" element={<FanBase />} />
+          <Route path="commerce" element={<Commerce />} />
+          <Route path="sponsorships" element={<Sponsorships />} />
           <Route path="organizations" element={<Organizations />} />
           <Route path="season-transitions" element={<SeasonTransitions />} />
           <Route path="rosters" element={<Rosters />} />
