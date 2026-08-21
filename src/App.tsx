@@ -24,6 +24,9 @@ import { SocialFeed } from './pages/SocialFeed'
 import { Messages } from './pages/Messages'
 import { LiveGameTracking } from './pages/LiveGameTracking'
 import { Leaderboards } from './pages/Leaderboards'
+import { SystemAdmin } from './pages/SystemAdmin'
+import { Integrations } from './pages/Integrations'
+import { InvoicingAndAuditing } from './pages/InvoicingAndAuditing'
 import { Login } from './pages/Login'
 import { Signup } from './pages/Signup'
 import { RequireAuth } from './components/RequireAuth'
@@ -65,6 +68,9 @@ function App() {
           <Route path="messages" element={<Messages />} />
           <Route path="live" element={<LiveGameTracking />} />
           <Route path="leaderboards" element={<Leaderboards />} />
+          <Route path="system-admin" element={<SystemAdmin />} />
+          <Route path="integrations" element={<Integrations />} />
+          <Route path="invoicing-and-auditing" element={<InvoicingAndAuditing />} />
         </Route>
       </Routes>
     </BrowserRouter>

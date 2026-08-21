@@ -29,6 +29,9 @@ export function AppLayout() {
             <Link to="/messages" className="text-slate-600 hover:text-slate-900 transition-colors">Messages</Link>
             <Link to="/live" className="text-slate-600 hover:text-slate-900 transition-colors">Live</Link>
             <Link to="/leaderboards" className="text-slate-600 hover:text-slate-900 transition-colors">Leaderboards</Link>
+            <Link to="/system-admin" className="text-slate-600 hover:text-slate-900 transition-colors">Admin</Link>
+            <Link to="/integrations" className="text-slate-600 hover:text-slate-900 transition-colors">Integrations</Link>
+            <Link to="/invoicing-and-auditing" className="text-slate-600 hover:text-slate-900 transition-colors">Invoicing & Auditing</Link>
             <div className="w-8 h-8 rounded-full bg-slate-200 border border-slate-300"></div>
           </nav>
         </div>
