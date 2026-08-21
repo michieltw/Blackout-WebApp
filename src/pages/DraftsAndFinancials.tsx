@@ -9,6 +9,9 @@ type DraftPick = Database['public']['Tables']['draft_picks']['Row']
 type SalaryCapRule = Database['public']['Tables']['salary_cap_rules']['Row']
 type SalaryCapTracking = Database['public']['Tables']['salary_cap_tracking']['Row']
 type Expense = Database['public']['Tables']['expenses']['Row']
+type ContractTerm = Database['public']['Tables']['contract_terms']['Row']
+type PlayerContractHistory = Database['public']['Tables']['player_contract_history']['Row']
+type DraftTeam = Database['public']['Tables']['draft_teams']['Row']
 
 export function DraftsAndFinancials() {
   const [drafts, setDrafts] = useState<PlayerDraft[]>([])
@@ -16,6 +19,10 @@ export function DraftsAndFinancials() {
   const [capRules, setCapRules] = useState<SalaryCapRule[]>([])
   const [capTracking, setCapTracking] = useState<SalaryCapTracking[]>([])
   const [expenses, setExpenses] = useState<Expense[]>([])
+
+  const [contractTerms, setContractTerms] = useState<ContractTerm[]>([])
+  const [contractHistory, setContractHistory] = useState<PlayerContractHistory[]>([])
+  const [draftTeams, setDraftTeams] = useState<DraftTeam[]>([])
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -28,13 +35,19 @@ export function DraftsAndFinancials() {
           picksData,
           rulesData,
           trackingData,
-          expensesData
+          expensesData,
+          termsData,
+          historyData,
+          teamsData
         ] = await Promise.all([
           fetchTableData('player_drafts'),
           fetchTableData('draft_picks'),
           fetchTableData('salary_cap_rules'),
           fetchTableData('salary_cap_tracking'),
-          fetchTableData('expenses')
+          fetchTableData('expenses'),
+          fetchTableData('contract_terms'),
+          fetchTableData('player_contract_history'),
+          fetchTableData('draft_teams')
         ])
 
         setDrafts(draftsData || [])
@@ -42,6 +55,9 @@ export function DraftsAndFinancials() {
         setCapRules(rulesData || [])
         setCapTracking(trackingData || [])
         setExpenses(expensesData || [])
+        setContractTerms(termsData || [])
+        setContractHistory(historyData || [])
+        setDraftTeams(teamsData || [])
       } catch (err: any) {
         setError(err.message || 'Failed to fetch drafts and financials data')
       } finally {
@@ -224,6 +240,97 @@ export function DraftsAndFinancials() {
             </div>
           </div>
 
+
+          {/* Draft Teams */}
+          <div className="grid gap-4">
+            <h2 className="text-lg font-semibold text-slate-800">Draft Teams</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+              {draftTeams.length === 0 ? (
+                <div className="text-sm text-slate-500">No draft teams found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Draft ID</TableHead>
+                    <TableHead>Team ID</TableHead>
+                    <TableHead>Draft Order</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {draftTeams.map((dt) => (
+                      <TableRow key={dt.id}>
+                        <TableCell className="tabular-nums">{dt.id}</TableCell>
+                        <TableCell className="tabular-nums">{dt.draft_id}</TableCell>
+                        <TableCell className="tabular-nums">{dt.team_id}</TableCell>
+                        <TableCell className="tabular-nums">{dt.draft_order || '-'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
+
+          {/* Contract Terms */}
+          <div className="grid gap-4">
+            <h2 className="text-lg font-semibold text-slate-800">Contract Terms</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+              {contractTerms.length === 0 ? (
+                <div className="text-sm text-slate-500">No contract terms found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Contract ID</TableHead>
+                    <TableHead>Term Name</TableHead>
+                    <TableHead>Term Value</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {contractTerms.map((ct) => (
+                      <TableRow key={ct.id}>
+                        <TableCell className="tabular-nums">{ct.id}</TableCell>
+                        <TableCell className="tabular-nums">{ct.contract_id}</TableCell>
+                        <TableCell className="font-medium text-slate-900">{ct.term_name}</TableCell>
+                        <TableCell className="text-slate-500">{ct.term_value || '-'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
+
+          {/* Player Contract History */}
+          <div className="grid gap-4">
+            <h2 className="text-lg font-semibold text-slate-800">Player Contract History</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+              {contractHistory.length === 0 ? (
+                <div className="text-sm text-slate-500">No contract history found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Player ID</TableHead>
+                    <TableHead>Team ID</TableHead>
+                    <TableHead>Season ID</TableHead>
+                    <TableHead>Start Date</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {contractHistory.map((ch) => (
+                      <TableRow key={ch.id}>
+                        <TableCell className="tabular-nums">{ch.id}</TableCell>
+                        <TableCell className="tabular-nums">{ch.player_id}</TableCell>
+                        <TableCell className="tabular-nums">{ch.team_id}</TableCell>
+                        <TableCell className="tabular-nums">{ch.season_id}</TableCell>
+                        <TableCell className="tabular-nums">{ch.start_date}</TableCell>
+                        <TableCell className="capitalize text-slate-500">{ch.status || '-'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
         </>
       )}
     </div>

@@ -9,6 +9,10 @@ type PlayerRating = Database['public']['Tables']['player_ratings']['Row']
 type PlayerInjury = Database['public']['Tables']['player_injuries']['Row']
 type PlayerContract = Database['public']['Tables']['player_contracts']['Row']
 type PlayerSalary = Database['public']['Tables']['player_salary']['Row']
+type CoachingNote = Database['public']['Tables']['coaching_notes']['Row']
+type Playbook = Database['public']['Tables']['playbooks']['Row']
+type PlaybookDiagram = Database['public']['Tables']['playbook_diagrams']['Row']
+type DevelopmentMilestone = Database['public']['Tables']['development_milestones']['Row']
 
 export function PlayerProgression() {
   const [developmentPlans, setDevelopmentPlans] = useState<DevelopmentPlan[]>([])
@@ -16,6 +20,11 @@ export function PlayerProgression() {
   const [playerInjuries, setPlayerInjuries] = useState<PlayerInjury[]>([])
   const [playerContracts, setPlayerContracts] = useState<PlayerContract[]>([])
   const [playerSalaries, setPlayerSalaries] = useState<PlayerSalary[]>([])
+
+  const [coachingNotes, setCoachingNotes] = useState<CoachingNote[]>([])
+  const [playbooks, setPlaybooks] = useState<Playbook[]>([])
+  const [playbookDiagrams, setPlaybookDiagrams] = useState<PlaybookDiagram[]>([])
+  const [developmentMilestones, setDevelopmentMilestones] = useState<DevelopmentMilestone[]>([])
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -28,13 +37,21 @@ export function PlayerProgression() {
           ratingsData,
           injuriesData,
           contractsData,
-          salariesData
+          salariesData,
+          notesData,
+          playbooksData,
+          diagramsData,
+          milestonesData
         ] = await Promise.all([
           fetchTableData('player_development_plans'),
           fetchTableData('player_ratings'),
           fetchTableData('player_injuries'),
           fetchTableData('player_contracts'),
-          fetchTableData('player_salary')
+          fetchTableData('player_salary'),
+          fetchTableData('coaching_notes'),
+          fetchTableData('playbooks'),
+          fetchTableData('playbook_diagrams'),
+          fetchTableData('development_milestones')
         ])
 
         setDevelopmentPlans(plansData || [])
@@ -42,6 +59,10 @@ export function PlayerProgression() {
         setPlayerInjuries(injuriesData || [])
         setPlayerContracts(contractsData || [])
         setPlayerSalaries(salariesData || [])
+        setCoachingNotes(notesData || [])
+        setPlaybooks(playbooksData || [])
+        setPlaybookDiagrams(diagramsData || [])
+        setDevelopmentMilestones(milestonesData || [])
       } catch (err: any) {
         setError(err.message || 'Failed to fetch player progression data')
       } finally {
@@ -226,6 +247,122 @@ export function PlayerProgression() {
             </div>
           </div>
 
+
+          {/* Coaching Notes */}
+          <div className="grid gap-4">
+            <h2 className="text-lg font-semibold text-slate-800">Coaching Notes</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+              {coachingNotes.length === 0 ? (
+                <div className="text-sm text-slate-500">No coaching notes found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Coach ID</TableHead>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Visibility</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {coachingNotes.map((note) => (
+                      <TableRow key={note.id}>
+                        <TableCell className="tabular-nums">{note.id}</TableCell>
+                        <TableCell className="tabular-nums">{note.coach_id}</TableCell>
+                        <TableCell className="font-medium text-slate-900">{note.title}</TableCell>
+                        <TableCell className="text-slate-500 capitalize">{note.visibility || '-'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
+
+          {/* Playbooks */}
+          <div className="grid gap-4">
+            <h2 className="text-lg font-semibold text-slate-800">Playbooks</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+              {playbooks.length === 0 ? (
+                <div className="text-sm text-slate-500">No playbooks found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Team ID</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Active</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {playbooks.map((pb) => (
+                      <TableRow key={pb.id}>
+                        <TableCell className="tabular-nums">{pb.id}</TableCell>
+                        <TableCell className="tabular-nums">{pb.team_id}</TableCell>
+                        <TableCell className="font-medium text-slate-900">{pb.name}</TableCell>
+                        <TableCell className="text-slate-500">{pb.is_active ? 'Yes' : 'No'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
+
+          {/* Playbook Diagrams */}
+          <div className="grid gap-4">
+            <h2 className="text-lg font-semibold text-slate-800">Playbook Diagrams</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+              {playbookDiagrams.length === 0 ? (
+                <div className="text-sm text-slate-500">No playbook diagrams found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Playbook ID</TableHead>
+                    <TableHead>Play Name</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {playbookDiagrams.map((pd) => (
+                      <TableRow key={pd.id}>
+                        <TableCell className="tabular-nums">{pd.id}</TableCell>
+                        <TableCell className="tabular-nums">{pd.playbook_id}</TableCell>
+                        <TableCell className="font-medium text-slate-900">{pd.play_name}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
+
+          {/* Development Milestones */}
+          <div className="grid gap-4">
+            <h2 className="text-lg font-semibold text-slate-800">Development Milestones</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+              {developmentMilestones.length === 0 ? (
+                <div className="text-sm text-slate-500">No development milestones found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Plan ID</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Target Date</TableHead>
+                    <TableHead>Achieved</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {developmentMilestones.map((dm) => (
+                      <TableRow key={dm.id}>
+                        <TableCell className="tabular-nums">{dm.id}</TableCell>
+                        <TableCell className="tabular-nums">{dm.plan_id}</TableCell>
+                        <TableCell className="font-medium text-slate-900">{dm.milestone_description}</TableCell>
+                        <TableCell className="text-slate-500 tabular-nums">{dm.target_date || '-'}</TableCell>
+                        <TableCell className="text-slate-500">{dm.achieved ? 'Yes' : 'No'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
         </>
       )}
     </div>
