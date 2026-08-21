@@ -2,6 +2,8 @@ import { useEffect } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AppLayout } from './layouts/AppLayout'
 import { Dashboard } from './pages/Dashboard'
+import { FoundationalEntities } from './pages/FoundationalEntities'
+import { UserManagement } from './pages/UserManagement'
 import { Teams } from './pages/Teams'
 import { Organizations } from './pages/Organizations'
 import { SeasonTransitions } from './pages/SeasonTransitions'
@@ -48,6 +50,8 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/" element={<RequireAuth><AppLayout /></RequireAuth>}>
           <Route index element={<Dashboard />} />
+          <Route path="foundational-entities" element={<FoundationalEntities />} />
+          <Route path="user-management" element={<UserManagement />} />
           <Route path="teams" element={<Teams />} />
           <Route path="team-details" element={<TeamDetails />} />
           <Route path="lineups" element={<LineupManagement />} />
