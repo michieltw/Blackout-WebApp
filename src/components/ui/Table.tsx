@@ -37,6 +37,6 @@ export function TableRow({ children, className = '' }: { children: React.ReactNo
   return <tr className={`hover:bg-slate-50 transition-colors ${className}`}>{children}</tr>
 }
 
-export function TableCell({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return <td className={`px-6 py-4 tabular-nums whitespace-nowrap ${className}`}>{children}</td>
+export function TableCell({ children, className = '', colSpan }: { children: React.ReactNode; className?: string; colSpan?: number }) {
+  return <td colSpan={colSpan} className={`px-6 py-4 tabular-nums whitespace-nowrap ${className}`}>{children}</td>
 }

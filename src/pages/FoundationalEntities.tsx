@@ -1,0 +1,310 @@
+import { useEffect, useState } from 'react'
+import { Trophy, Calendar, Map, MapPin, Building, Link as LinkIcon } from 'lucide-react'
+import { fetchTableData } from '../lib/api'
+import { Database } from '../types/supabase'
+import { Table, TableHeader, TableHead, TableBody, TableRow, TableCell } from '../components/ui/Table'
+
+type League = Database['public']['Tables']['leagues']['Row']
+type Season = Database['public']['Tables']['seasons']['Row']
+type Division = Database['public']['Tables']['divisions']['Row']
+type Conference = Database['public']['Tables']['conferences']['Row']
+type Club = Database['public']['Tables']['clubs']['Row']
+type DivisionTeamLookup = Database['public']['Tables']['division_team_lookup']['Row']
+
+export function FoundationalEntities() {
+  const [activeTab, setActiveTab] = useState<'leagues' | 'seasons' | 'divisions' | 'conferences' | 'clubs' | 'division_team'>('leagues')
+
+  const [leagues, setLeagues] = useState<League[]>([])
+  const [seasons, setSeasons] = useState<Season[]>([])
+  const [divisions, setDivisions] = useState<Division[]>([])
+  const [conferences, setConferences] = useState<Conference[]>([])
+  const [clubs, setClubs] = useState<Club[]>([])
+  const [divisionTeamLookup, setDivisionTeamLookup] = useState<DivisionTeamLookup[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function loadData() {
+      setIsLoading(true)
+      setError(null)
+      try {
+        if (activeTab === 'leagues') {
+          const data = await fetchTableData('leagues')
+          setLeagues(data || [])
+        } else if (activeTab === 'seasons') {
+          const data = await fetchTableData('seasons')
+          setSeasons(data || [])
+        } else if (activeTab === 'divisions') {
+          const data = await fetchTableData('divisions')
+          setDivisions(data || [])
+        } else if (activeTab === 'conferences') {
+          const data = await fetchTableData('conferences')
+          setConferences(data || [])
+        } else if (activeTab === 'clubs') {
+          const data = await fetchTableData('clubs')
+          setClubs(data || [])
+        } else if (activeTab === 'division_team') {
+          const data = await fetchTableData('division_team_lookup')
+          setDivisionTeamLookup(data || [])
+        }
+      } catch (err: any) {
+        setError(err.message || 'Failed to fetch data')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    loadData()
+  }, [activeTab])
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Foundational Entities</h1>
+        <p className="text-slate-500 mt-1">Manage core structural entities such as leagues, seasons, and divisions.</p>
+      </div>
+
+      <div className="border-b border-slate-200">
+        <nav className="-mb-px flex space-x-8 overflow-x-auto">
+          <button
+            onClick={() => setActiveTab('leagues')}
+            className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${
+              activeTab === 'leagues'
+                ? 'border-emerald-500 text-emerald-600'
+                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+            }`}
+          >
+            <Trophy className="w-4 h-4" /> Leagues
+          </button>
+          <button
+            onClick={() => setActiveTab('seasons')}
+            className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${
+              activeTab === 'seasons'
+                ? 'border-emerald-500 text-emerald-600'
+                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+            }`}
+          >
+            <Calendar className="w-4 h-4" /> Seasons
+          </button>
+          <button
+            onClick={() => setActiveTab('divisions')}
+            className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${
+              activeTab === 'divisions'
+                ? 'border-emerald-500 text-emerald-600'
+                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+            }`}
+          >
+            <Map className="w-4 h-4" /> Divisions
+          </button>
+          <button
+            onClick={() => setActiveTab('conferences')}
+            className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${
+              activeTab === 'conferences'
+                ? 'border-emerald-500 text-emerald-600'
+                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+            }`}
+          >
+            <MapPin className="w-4 h-4" /> Conferences
+          </button>
+          <button
+            onClick={() => setActiveTab('clubs')}
+            className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${
+              activeTab === 'clubs'
+                ? 'border-emerald-500 text-emerald-600'
+                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+            }`}
+          >
+            <Building className="w-4 h-4" /> Clubs
+          </button>
+          <button
+            onClick={() => setActiveTab('division_team')}
+            className={`whitespace-nowrap pb-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${
+              activeTab === 'division_team'
+                ? 'border-emerald-500 text-emerald-600'
+                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+            }`}
+          >
+            <LinkIcon className="w-4 h-4" /> Division Team Lookup
+          </button>
+        </nav>
+      </div>
+
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        {error && (
+          <div className="p-4 bg-amber-50 border-b border-amber-200 text-amber-700 text-sm">
+            {error}
+          </div>
+        )}
+
+        {isLoading ? (
+          <div className="p-12 text-center text-slate-500">Loading data...</div>
+        ) : (
+          <div className="overflow-x-auto">
+            {activeTab === 'leagues' && (
+              <Table>
+                <TableHeader>
+                  <TableHead>ID</TableHead>
+                  <TableHead>Organization ID</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Description</TableHead>
+                </TableHeader>
+                <TableBody>
+                  {leagues.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center text-slate-500">No leagues found.</TableCell>
+                    </TableRow>
+                  ) : (
+                    leagues.map(league => (
+                      <TableRow key={league.id}>
+                        <TableCell className="tabular-nums">{league.id}</TableCell>
+                        <TableCell className="tabular-nums">{league.organization_id}</TableCell>
+                        <TableCell className="font-medium text-slate-900">{league.name}</TableCell>
+                        <TableCell className="text-slate-500">{league.description || '-'}</TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            )}
+
+            {activeTab === 'seasons' && (
+              <Table>
+                <TableHeader>
+                  <TableHead>ID</TableHead>
+                  <TableHead>League ID</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Start Date</TableHead>
+                  <TableHead>End Date</TableHead>
+                </TableHeader>
+                <TableBody>
+                  {seasons.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center text-slate-500">No seasons found.</TableCell>
+                    </TableRow>
+                  ) : (
+                    seasons.map(season => (
+                      <TableRow key={season.id}>
+                        <TableCell className="tabular-nums">{season.id}</TableCell>
+                        <TableCell className="tabular-nums">{season.league_id}</TableCell>
+                        <TableCell className="font-medium text-slate-900">{season.name}</TableCell>
+                        <TableCell>{season.start_date ? new Date(season.start_date).toLocaleDateString() : '-'}</TableCell>
+                        <TableCell>{season.end_date ? new Date(season.end_date).toLocaleDateString() : '-'}</TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            )}
+
+            {activeTab === 'divisions' && (
+              <Table>
+                <TableHeader>
+                  <TableHead>ID</TableHead>
+                  <TableHead>League ID</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Age Group</TableHead>
+                  <TableHead>Level</TableHead>
+                </TableHeader>
+                <TableBody>
+                  {divisions.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center text-slate-500">No divisions found.</TableCell>
+                    </TableRow>
+                  ) : (
+                    divisions.map(division => (
+                      <TableRow key={division.id}>
+                        <TableCell className="tabular-nums">{division.id}</TableCell>
+                        <TableCell className="tabular-nums">{division.league_id}</TableCell>
+                        <TableCell className="font-medium text-slate-900">{division.name}</TableCell>
+                        <TableCell className="capitalize">{division.age_group || '-'}</TableCell>
+                        <TableCell>{division.level || '-'}</TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            )}
+
+            {activeTab === 'conferences' && (
+              <Table>
+                <TableHeader>
+                  <TableHead>ID</TableHead>
+                  <TableHead>Organization ID</TableHead>
+                  <TableHead>Name</TableHead>
+                </TableHeader>
+                <TableBody>
+                  {conferences.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={3} className="text-center text-slate-500">No conferences found.</TableCell>
+                    </TableRow>
+                  ) : (
+                    conferences.map(conference => (
+                      <TableRow key={conference.id}>
+                        <TableCell className="tabular-nums">{conference.id}</TableCell>
+                        <TableCell className="tabular-nums">{conference.organization_id}</TableCell>
+                        <TableCell className="font-medium text-slate-900">{conference.conference_name}</TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            )}
+
+            {activeTab === 'clubs' && (
+              <Table>
+                <TableHeader>
+                  <TableHead>ID</TableHead>
+                  <TableHead>Organization ID</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Code</TableHead>
+                </TableHeader>
+                <TableBody>
+                  {clubs.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center text-slate-500">No clubs found.</TableCell>
+                    </TableRow>
+                  ) : (
+                    clubs.map(club => (
+                      <TableRow key={club.id}>
+                        <TableCell className="tabular-nums">{club.id}</TableCell>
+                        <TableCell className="tabular-nums">{club.organization_id}</TableCell>
+                        <TableCell className="font-medium text-slate-900">{club.club_name}</TableCell>
+                        <TableCell>{club.club_code || '-'}</TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            )}
+
+            {activeTab === 'division_team' && (
+              <Table>
+                <TableHeader>
+                  <TableHead>ID</TableHead>
+                  <TableHead>Division ID</TableHead>
+                  <TableHead>Team ID</TableHead>
+                  <TableHead>Team Name</TableHead>
+                </TableHeader>
+                <TableBody>
+                  {divisionTeamLookup.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center text-slate-500">No division team lookups found.</TableCell>
+                    </TableRow>
+                  ) : (
+                    divisionTeamLookup.map(lookup => (
+                      <TableRow key={lookup.id}>
+                        <TableCell className="tabular-nums">{lookup.id}</TableCell>
+                        <TableCell className="tabular-nums">{lookup.division_id}</TableCell>
+                        <TableCell className="tabular-nums">{lookup.team_id}</TableCell>
+                        <TableCell className="tabular-nums">{lookup.team_name}</TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
