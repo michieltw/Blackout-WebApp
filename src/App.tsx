@@ -27,6 +27,8 @@ import { Leaderboards } from './pages/Leaderboards'
 import { SystemAdmin } from './pages/SystemAdmin'
 import { Integrations } from './pages/Integrations'
 import { InvoicingAndAuditing } from './pages/InvoicingAndAuditing'
+import { SpecializedProducts } from './pages/SpecializedProducts'
+import { ScorekeepingAndTemplates } from './pages/ScorekeepingAndTemplates'
 import { Login } from './pages/Login'
 import { Signup } from './pages/Signup'
 import { RequireAuth } from './components/RequireAuth'
@@ -71,6 +73,8 @@ function App() {
           <Route path="system-admin" element={<SystemAdmin />} />
           <Route path="integrations" element={<Integrations />} />
           <Route path="invoicing-and-auditing" element={<InvoicingAndAuditing />} />
+          <Route path="specialized-products" element={<SpecializedProducts />} />
+          <Route path="scorekeeping-and-templates" element={<ScorekeepingAndTemplates />} />
         </Route>
       </Routes>
     </BrowserRouter>
