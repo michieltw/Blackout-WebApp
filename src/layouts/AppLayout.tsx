@@ -1,9 +1,21 @@
 import { useState } from 'react'
 import { Outlet, Link } from 'react-router-dom'
-import { Activity, Menu, X } from 'lucide-react'
+import { Activity, Menu, X, ChevronDown, ChevronRight } from 'lucide-react'
 
 export function AppLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    competition: true,
+    teamManager: false,
+    playerHub: false,
+    community: false,
+    operations: false,
+    settings: false,
+  })
+
+  const toggleSection = (section: string) => {
+    setExpandedSections((prev) => ({ ...prev, [section]: !prev[section] }))
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased">
@@ -33,60 +45,102 @@ export function AppLayout() {
           </div>
 
           <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1 scrollbar-thin scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300">
-            <Link to="/" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Dashboard</Link>
+            <Link to="/" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors mb-2" onClick={() => setIsSidebarOpen(false)}>Dashboard</Link>
 
-            <div className="pt-4 pb-2">
-              <p className="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Competition</p>
+            <div className="pt-2">
+              <button onClick={() => toggleSection('competition')} className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider hover:text-slate-600 transition-colors">
+                <span>Competition</span>
+                {expandedSections.competition ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+              </button>
+              {expandedSections.competition && (
+                <div className="space-y-1 mt-1 mb-2">
+                  <Link to="/schedule" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Schedule</Link>
+                  <Link to="/live" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Live Games</Link>
+                  <Link to="/leaderboards" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Leaderboards</Link>
+                  <Link to="/statistics" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Deep Statistics</Link>
+                  <Link to="/scorekeeping-and-templates" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Scorekeeping</Link>
+                  <Link to="/officiating" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Officiating</Link>
+                </div>
+              )}
             </div>
-            <Link to="/schedule" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Schedule</Link>
-            <Link to="/live" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Live Games</Link>
-            <Link to="/leaderboards" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Leaderboards</Link>
-            <Link to="/statistics" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Deep Statistics</Link>
-            <Link to="/scorekeeping-and-templates" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Scorekeeping</Link>
-            <Link to="/officiating" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Officiating</Link>
 
-            <div className="pt-4 pb-2">
-              <p className="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Team Manager</p>
+            <div className="pt-2">
+              <button onClick={() => toggleSection('teamManager')} className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider hover:text-slate-600 transition-colors">
+                <span>Team Manager</span>
+                {expandedSections.teamManager ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+              </button>
+              {expandedSections.teamManager && (
+                <div className="space-y-1 mt-1 mb-2">
+                  <Link to="/teams" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Teams</Link>
+                  <Link to="/team-details" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Team Details</Link>
+                  <Link to="/rosters" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Rosters</Link>
+                  <Link to="/lineups" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Lineups</Link>
+                  <Link to="/drafts-and-financials" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Drafts & Financials</Link>
+                </div>
+              )}
             </div>
-            <Link to="/teams" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Teams</Link>
-            <Link to="/team-details" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Team Details</Link>
-            <Link to="/rosters" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Rosters</Link>
-            <Link to="/lineups" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Lineups</Link>
-            <Link to="/drafts-and-financials" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Drafts & Financials</Link>
 
-            <div className="pt-4 pb-2">
-              <p className="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Player Hub</p>
+            <div className="pt-2">
+              <button onClick={() => toggleSection('playerHub')} className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider hover:text-slate-600 transition-colors">
+                <span>Player Hub</span>
+                {expandedSections.playerHub ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+              </button>
+              {expandedSections.playerHub && (
+                <div className="space-y-1 mt-1 mb-2">
+                  <Link to="/players" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Players</Link>
+                  <Link to="/player-movement" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Player Movement</Link>
+                  <Link to="/player-progression" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Progression</Link>
+                  <Link to="/achievements" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Achievements</Link>
+                </div>
+              )}
             </div>
-            <Link to="/players" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Players</Link>
-            <Link to="/player-movement" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Player Movement</Link>
-            <Link to="/player-progression" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Progression</Link>
-            <Link to="/achievements" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Achievements</Link>
 
-            <div className="pt-4 pb-2">
-              <p className="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Community & Social</p>
+            <div className="pt-2">
+              <button onClick={() => toggleSection('community')} className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider hover:text-slate-600 transition-colors">
+                <span>Community & Social</span>
+                {expandedSections.community ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+              </button>
+              {expandedSections.community && (
+                <div className="space-y-1 mt-1 mb-2">
+                  <Link to="/feed" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Social Feed</Link>
+                  <Link to="/fan-base" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Fan Base</Link>
+                  <Link to="/messages" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Messages</Link>
+                </div>
+              )}
             </div>
-            <Link to="/feed" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Social Feed</Link>
-            <Link to="/fan-base" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Fan Base</Link>
-            <Link to="/messages" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Messages</Link>
 
-            <div className="pt-4 pb-2">
-              <p className="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">League Operations</p>
+            <div className="pt-2">
+              <button onClick={() => toggleSection('operations')} className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider hover:text-slate-600 transition-colors">
+                <span>League Operations</span>
+                {expandedSections.operations ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+              </button>
+              {expandedSections.operations && (
+                <div className="space-y-1 mt-1 mb-2">
+                  <Link to="/organizations" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Organizations</Link>
+                  <Link to="/season-transitions" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Season Transitions</Link>
+                  <Link to="/rules-and-discipline" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Rules & Discipline</Link>
+                  <Link to="/commerce" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Commerce</Link>
+                  <Link to="/sponsorships" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Sponsorships</Link>
+                </div>
+              )}
             </div>
-            <Link to="/organizations" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Organizations</Link>
-            <Link to="/season-transitions" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Season Transitions</Link>
-            <Link to="/rules-and-discipline" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Rules & Discipline</Link>
-            <Link to="/commerce" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Commerce</Link>
-            <Link to="/sponsorships" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Sponsorships</Link>
 
-            <div className="pt-4 pb-2">
-              <p className="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">Settings & Admin</p>
+            <div className="pt-2">
+              <button onClick={() => toggleSection('settings')} className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider hover:text-slate-600 transition-colors">
+                <span>Settings & Admin</span>
+                {expandedSections.settings ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+              </button>
+              {expandedSections.settings && (
+                <div className="space-y-1 mt-1 mb-2">
+                  <Link to="/foundational-entities" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Foundational Entities</Link>
+                  <Link to="/user-management" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>User Management</Link>
+                  <Link to="/system-admin" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>System Admin</Link>
+                  <Link to="/integrations" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Integrations</Link>
+                  <Link to="/invoicing-and-auditing" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Invoicing & Audits</Link>
+                  <Link to="/specialized-products" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Specialized Products</Link>
+                </div>
+              )}
             </div>
-            <Link to="/foundational-entities" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Foundational Entities</Link>
-            <Link to="/user-management" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>User Management</Link>
-            <Link to="/system-admin" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>System Admin</Link>
-            <Link to="/integrations" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Integrations</Link>
-            <Link to="/invoicing-and-auditing" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Invoicing & Audits</Link>
-            <Link to="/specialized-products" className="block px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors" onClick={() => setIsSidebarOpen(false)}>Specialized Products</Link>
           </nav>
 
           <div className="p-4 border-t border-slate-200">
