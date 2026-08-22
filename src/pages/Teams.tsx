@@ -9,18 +9,12 @@ type Team = Database['public']['Tables']['teams']['Row']
 export function Teams() {
   const [teams, setTeams] = useState<Team[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      try {
         const data = await fetchTableData('teams')
         setTeams(data || [])
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch teams')
-      } finally {
         setLoading(false)
-      }
     }
     load()
   }, [])
@@ -34,11 +28,6 @@ export function Teams() {
 
       <div className="grid gap-6">
         <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
-          {error && (
-            <div className="mb-4 text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-md">
-              {error}
-            </div>
-          )}
           {loading ? (
             <div className="text-sm text-slate-500">Loading data...</div>
           ) : teams.length === 0 ? (

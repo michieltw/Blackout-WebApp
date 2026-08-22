@@ -6,6 +6,13 @@ import { Button } from '@/components/ui/Button'
 type Game = Database['public']['Tables']['games']['Row']
 type GameEvent = Database['public']['Tables']['game_events']['Row']
 
+
+function getEventStyle(eventType: string | undefined | null) {
+  if (eventType === 'goal') return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+  if (eventType === 'penalty') return 'bg-amber-50 text-amber-700 border-amber-200';
+  return 'bg-slate-50 text-slate-700 border-slate-200';
+}
+
 export function LiveGameTracking() {
   const [games, setGames] = useState<Game[]>([])
   const [selectedGameId, setSelectedGameId] = useState<number | null>(null)
@@ -185,9 +192,7 @@ export function LiveGameTracking() {
                         </div>
                         <div className="shrink-0">
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-                            event?.event_type === 'goal' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-                            event?.event_type === 'penalty' ? 'bg-amber-50 text-amber-700 border-amber-200' :
-                            'bg-white text-slate-700 border-slate-300'
+                            getEventStyle(event?.event_type)
                           }`}>
                             {event?.event_type?.toUpperCase()}
                           </span>

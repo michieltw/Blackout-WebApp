@@ -15,11 +15,9 @@ export function Venues() {
   const [availability, setAvailability] = useState<IceTimeAvailability[]>([])
   const [conflicts, setConflicts] = useState<GameSchedulingConflict[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      try {
         const [
           venuesData,
           bookingsData,
@@ -36,11 +34,7 @@ export function Venues() {
         setBookings(bookingsData || [])
         setAvailability(availabilityData || [])
         setConflicts(conflictsData || [])
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch venue data')
-      } finally {
         setLoading(false)
-      }
     }
     load()
   }, [])
@@ -52,11 +46,6 @@ export function Venues() {
         <Button variant="primary">Manage Venues</Button>
       </div>
 
-      {error && (
-        <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-md">
-          {error}
-        </div>
-      )}
 
       {loading ? (
         <div className="text-sm text-slate-500">Loading data...</div>

@@ -15,11 +15,9 @@ export function LineupManagement() {
   const [lineupUnits, setLineupUnits] = useState<LineupUnit[]>([])
   const [lineupUnitPlayers, setLineupUnitPlayers] = useState<LineupUnitPlayer[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      try {
         const [
           lineupsData,
           lineupPlayersData,
@@ -36,11 +34,7 @@ export function LineupManagement() {
         setLineupPlayers(lineupPlayersData || [])
         setLineupUnits(lineupUnitsData || [])
         setLineupUnitPlayers(lineupUnitPlayersData || [])
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch lineup data')
-      } finally {
         setLoading(false)
-      }
     }
     load()
   }, [])
@@ -52,11 +46,6 @@ export function LineupManagement() {
         <Button variant="primary">Manage Lineups</Button>
       </div>
 
-      {error && (
-        <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-md">
-          {error}
-        </div>
-      )}
 
       {loading ? (
         <div className="text-sm text-slate-500">Loading data...</div>

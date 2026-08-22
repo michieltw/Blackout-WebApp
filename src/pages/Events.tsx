@@ -19,11 +19,9 @@ export function Events() {
   const [practiceAttendance, setPracticeAttendance] = useState<PracticeAttendance[]>([])
   const [playerAvailability, setPlayerAvailability] = useState<PlayerAvailability[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      try {
         const [
           eventsData,
           rsvpsData,
@@ -46,11 +44,7 @@ export function Events() {
         setPracticeSessions(sessionsData || [])
         setPracticeAttendance(attendanceData || [])
         setPlayerAvailability(availabilityData || [])
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch events data')
-      } finally {
         setLoading(false)
-      }
     }
     load()
   }, [])
@@ -62,11 +56,6 @@ export function Events() {
         <Button variant="primary">Create Event</Button>
       </div>
 
-      {error && (
-        <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-md">
-          {error}
-        </div>
-      )}
 
       {loading ? (
         <div className="text-sm text-slate-500">Loading data...</div>

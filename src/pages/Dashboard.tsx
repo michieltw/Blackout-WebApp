@@ -35,7 +35,7 @@ export function Dashboard() {
           <TableHead>Status</TableHead>
         </TableHeader>
         <TableBody>
-          {(teams || []).slice(0, 5).map((team) => (
+          {(teams || []).map((team) => (
             <TableRow key={team.id}>
               <TableCell>{team.id}</TableCell>
               <TableCell className="font-medium text-slate-900">{team?.name || 'Unnamed'}</TableCell>

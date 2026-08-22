@@ -13,11 +13,9 @@ export function Tournaments() {
   const [tournamentTeams, setTournamentTeams] = useState<TournamentTeam[]>([])
   const [tournamentBrackets, setTournamentBrackets] = useState<TournamentBracket[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      try {
         const [
           tournamentsData,
           teamsData,
@@ -31,11 +29,7 @@ export function Tournaments() {
         setTournaments(tournamentsData || [])
         setTournamentTeams(teamsData || [])
         setTournamentBrackets(bracketsData || [])
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch tournament data')
-      } finally {
         setLoading(false)
-      }
     }
     load()
   }, [])
@@ -47,11 +41,6 @@ export function Tournaments() {
         <Button variant="primary">Create Tournament</Button>
       </div>
 
-      {error && (
-        <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-md">
-          {error}
-        </div>
-      )}
 
       {loading ? (
         <div className="text-sm text-slate-500">Loading data...</div>
