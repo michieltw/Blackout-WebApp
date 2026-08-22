@@ -38,7 +38,7 @@ export function Login() {
   }
 
   return (
-    <div className="flex min-h-[80vh] items-center justify-center p-4">
+    <div className="flex min-h-screen items-center justify-center p-4 bg-slate-900">
       <div className="w-full max-w-md space-y-8 rounded-xl bg-white p-8 shadow-sm border border-slate-200">
         <div className="text-center">
           <h2 className="text-3xl font-bold tracking-tight text-slate-900">Sign in to your account</h2>
