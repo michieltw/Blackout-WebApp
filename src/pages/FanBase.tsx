@@ -10,6 +10,8 @@ type LoyaltyPoints = Database['public']['Tables']['loyalty_points']['Row']
 type SeasonTicket = Database['public']['Tables']['season_tickets']['Row']
 type FanClub = Database['public']['Tables']['fan_clubs']['Row']
 type MembershipTier = Database['public']['Tables']['membership_tiers']['Row']
+type Membership = Database['public']['Tables']['memberships']['Row']
+type FanClubMember = Database['public']['Tables']['fan_club_members']['Row']
 
 export function FanBase() {
   const [fanProfiles, setFanProfiles] = useState<FanProfile[]>([])
@@ -18,6 +20,8 @@ export function FanBase() {
   const [seasonTickets, setSeasonTickets] = useState<SeasonTicket[]>([])
   const [fanClubs, setFanClubs] = useState<FanClub[]>([])
   const [membershipTiers, setMembershipTiers] = useState<MembershipTier[]>([])
+  const [memberships, setMemberships] = useState<Membership[]>([])
+  const [fanClubMembers, setFanClubMembers] = useState<FanClubMember[]>([])
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -26,14 +30,23 @@ export function FanBase() {
     async function load() {
       try {
         const [
-          fpData, fmData, lpData, stData, fcData, mtData
+          fpData,
+          fmData,
+          lpData,
+          stData,
+          fcData,
+          mtData,
+          membershipsData,
+          fanClubMembersData
         ] = await Promise.all([
           fetchTableData('fan_profiles'),
           fetchTableData('fan_memberships'),
           fetchTableData('loyalty_points'),
           fetchTableData('season_tickets'),
           fetchTableData('fan_clubs'),
-          fetchTableData('membership_tiers')
+          fetchTableData('membership_tiers'),
+          fetchTableData('memberships'),
+          fetchTableData('fan_club_members')
         ])
 
         setFanProfiles(fpData || [])
@@ -42,6 +55,8 @@ export function FanBase() {
         setSeasonTickets(stData || [])
         setFanClubs(fcData || [])
         setMembershipTiers(mtData || [])
+        setMemberships(membershipsData || [])
+        setFanClubMembers(fanClubMembersData || [])
       } catch (err: any) {
         setError(err.message || 'Failed to fetch fan base data')
       } finally {
@@ -257,6 +272,71 @@ export function FanBase() {
             </div>
           </div>
 
+
+
+          {/* Memberships */}
+          <div className="grid gap-4">
+            <h2 className="text-lg font-semibold text-slate-800">Memberships</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+              {memberships.length === 0 ? (
+                <div className="text-sm text-slate-500">No memberships found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>User ID</TableHead>
+                    <TableHead>Tier ID</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Valid From</TableHead>
+                    <TableHead>Valid Until</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {memberships.map((membership) => (
+                      <TableRow key={membership.id}>
+                        <TableCell className="tabular-nums">{membership.id}</TableCell>
+                        <TableCell className="font-medium text-slate-900 tabular-nums">{membership.person_id}</TableCell>
+                        <TableCell className="tabular-nums">{membership.tier_id}</TableCell>
+                        <TableCell className="capitalize">{membership.status || '-'}</TableCell>
+                        <TableCell className="tabular-nums text-slate-500">{membership.join_date}</TableCell>
+                        <TableCell className="tabular-nums text-slate-500">{membership.end_date || 'Forever'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
+
+          {/* Fan Club Members */}
+          <div className="grid gap-4">
+            <h2 className="text-lg font-semibold text-slate-800">Fan Club Members</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+              {fanClubMembers.length === 0 ? (
+                <div className="text-sm text-slate-500">No fan club members found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Fan Club ID</TableHead>
+                    <TableHead>Fan Profile ID</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Joined Date</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {fanClubMembers.map((member) => (
+                      <TableRow key={member.id}>
+                        <TableCell className="tabular-nums">{member.id}</TableCell>
+                        <TableCell className="font-medium text-slate-900 tabular-nums">{member.fan_club_id}</TableCell>
+                        <TableCell className="tabular-nums">{member.user_id}</TableCell>
+                        <TableCell className="capitalize">{member.role || 'Member'}</TableCell>
+                        <TableCell className="tabular-nums text-slate-500">{member.join_date}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
         </>
       )}
     </div>

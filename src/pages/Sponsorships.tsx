@@ -10,6 +10,9 @@ type Sponsor = Database['public']['Tables']['sponsors']['Row']
 type Advertisement = Database['public']['Tables']['advertisements']['Row']
 type SocialMediaAccount = Database['public']['Tables']['social_media_accounts']['Row']
 type Document = Database['public']['Tables']['documents']['Row']
+type SponsorshipDeliverable = Database['public']['Tables']['sponsorship_deliverables']['Row']
+type SponsorshipPayment = Database['public']['Tables']['sponsorship_payments']['Row']
+type AdPlacement = Database['public']['Tables']['ad_placements']['Row']
 
 export function Sponsorships() {
   const [brands, setBrands] = useState<Brand[]>([])
@@ -18,6 +21,9 @@ export function Sponsorships() {
   const [advertisements, setAdvertisements] = useState<Advertisement[]>([])
   const [socialAccounts, setSocialAccounts] = useState<SocialMediaAccount[]>([])
   const [documents, setDocuments] = useState<Document[]>([])
+  const [sponsorshipDeliverables, setSponsorshipDeliverables] = useState<SponsorshipDeliverable[]>([])
+  const [sponsorshipPayments, setSponsorshipPayments] = useState<SponsorshipPayment[]>([])
+  const [adPlacements, setAdPlacements] = useState<AdPlacement[]>([])
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -27,14 +33,20 @@ export function Sponsorships() {
       try {
         const [
           bData, rData, sData,
-          adData, smData, docData
+          adData, smData, docData,
+          delivData,
+          payData,
+          placeData
         ] = await Promise.all([
           fetchTableData('brands'),
           fetchTableData('retailers'),
           fetchTableData('sponsors'),
           fetchTableData('advertisements'),
           fetchTableData('social_media_accounts'),
-          fetchTableData('documents')
+          fetchTableData('documents'),
+          fetchTableData('sponsorship_deliverables'),
+          fetchTableData('sponsorship_payments'),
+          fetchTableData('ad_placements')
         ])
 
         setBrands(bData || [])
@@ -43,6 +55,9 @@ export function Sponsorships() {
         setAdvertisements(adData || [])
         setSocialAccounts(smData || [])
         setDocuments(docData || [])
+        setSponsorshipDeliverables(delivData || [])
+        setSponsorshipPayments(payData || [])
+        setAdPlacements(placeData || [])
       } catch (err: any) {
         setError(err.message || 'Failed to fetch sponsorships data')
       } finally {
@@ -250,6 +265,100 @@ export function Sponsorships() {
             </div>
           </div>
 
+
+
+          {/* Sponsorship Deliverables */}
+          <div className="grid gap-4 mt-8">
+            <h2 className="text-lg font-semibold text-slate-800">Sponsorship Deliverables</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+              {sponsorshipDeliverables.length === 0 ? (
+                <div className="text-sm text-slate-500">No sponsorship deliverables found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Sponsor ID</TableHead>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Due Date</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {sponsorshipDeliverables.map((deliv) => (
+                      <TableRow key={deliv.id}>
+                        <TableCell className="tabular-nums">{deliv.id}</TableCell>
+                        <TableCell className="font-medium text-slate-900 tabular-nums">{deliv.sponsor_id}</TableCell>
+                        <TableCell className="font-medium text-slate-900">{deliv.deliverable_name}</TableCell>
+                        <TableCell className="capitalize">{deliv.status || '-'}</TableCell>
+                        <TableCell className="tabular-nums text-slate-500">{deliv.expected_date || '-'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
+
+          {/* Sponsorship Payments */}
+          <div className="grid gap-4 mt-8">
+            <h2 className="text-lg font-semibold text-slate-800">Sponsorship Payments</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+              {sponsorshipPayments.length === 0 ? (
+                <div className="text-sm text-slate-500">No sponsorship payments found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Sponsor ID</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {sponsorshipPayments.map((pay) => (
+                      <TableRow key={pay.id}>
+                        <TableCell className="tabular-nums">{pay.id}</TableCell>
+                        <TableCell className="font-medium text-slate-900 tabular-nums">{pay.sponsor_id}</TableCell>
+                        <TableCell className="tabular-nums text-slate-900">${pay.payment_amount}</TableCell>
+                        <TableCell className="tabular-nums text-slate-500">{pay.payment_date || '-'}</TableCell>
+                        <TableCell className="capitalize">{pay.transaction_id || '-'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
+
+          {/* Ad Placements */}
+          <div className="grid gap-4 mt-8">
+            <h2 className="text-lg font-semibold text-slate-800">Ad Placements</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+              {adPlacements.length === 0 ? (
+                <div className="text-sm text-slate-500">No ad placements found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Ad ID</TableHead>
+                    <TableHead>Location</TableHead>
+                    <TableHead>Start Date</TableHead>
+                    <TableHead>End Date</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {adPlacements.map((place) => (
+                      <TableRow key={place.id}>
+                        <TableCell className="tabular-nums">{place.id}</TableCell>
+                        <TableCell className="font-medium text-slate-900 tabular-nums">{place.advertisement_id}</TableCell>
+                        <TableCell className="font-medium text-slate-900">{place.location_description}</TableCell>
+                        <TableCell className="tabular-nums text-slate-500">{place.placement_start_date || '-'}</TableCell>
+                        <TableCell className="tabular-nums text-slate-500">{place.placement_end_date || '-'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
         </>
       )}
     </div>

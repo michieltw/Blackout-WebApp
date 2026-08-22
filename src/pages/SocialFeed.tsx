@@ -4,25 +4,48 @@ import { Database } from '@/types/supabase'
 import { Button } from '@/components/ui/Button'
 
 type Announcement = Database['public']['Tables']['announcements']['Row']
+type SocialMediaPost = Database['public']['Tables']['social_media_posts']['Row']
+type Media = Database['public']['Tables']['media']['Row']
+type Group = Database['public']['Tables']['groups']['Row']
 
 export function SocialFeed() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [posts, setPosts] = useState<SocialMediaPost[]>([])
+  const [media, setMedia] = useState<Media[]>([])
+  const [groups, setGroups] = useState<Group[]>([])
+  const [activeTab, setActiveTab] = useState('announcements')
 
   useEffect(() => {
     async function load() {
       try {
-        const data = await fetchTableData('announcements')
+        const [
+          announcementsData,
+          postsData,
+          mediaData,
+          groupsData
+        ] = await Promise.all([
+          fetchTableData('announcements'),
+          fetchTableData('social_media_posts'),
+          fetchTableData('media'),
+          fetchTableData('groups')
+        ])
+
         // Sort by publish date descending to show newest first
-        const sortedData = (data || []).sort((a, b) => {
+        const sortedData = (announcementsData || []).sort((a, b) => {
           const dateA = a.publish_date || a.created_at || ''
           const dateB = b.publish_date || b.created_at || ''
           return new Date(dateB).getTime() - new Date(dateA).getTime()
         })
         setAnnouncements(sortedData)
+
+        setPosts(postsData || [])
+        setMedia(mediaData || [])
+        setGroups(groupsData || [])
+
       } catch (err: any) {
-        setError(err.message || 'Failed to fetch announcements')
+        setError(err.message || 'Failed to fetch data')
       } finally {
         setLoading(false)
       }
@@ -60,8 +83,53 @@ export function SocialFeed() {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Community Feed</h1>
-        <Button variant="primary">Post Update</Button>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900">Community & Media</h1>
+        <Button variant="primary">Create</Button>
+      </div>
+
+      <div className="border-b border-slate-200">
+        <nav className="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
+          <button
+            onClick={() => setActiveTab('announcements')}
+            className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'announcements'
+                ? 'border-emerald-500 text-emerald-600'
+                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+            }`}
+          >
+            Announcements
+          </button>
+          <button
+            onClick={() => setActiveTab('social')}
+            className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'social'
+                ? 'border-emerald-500 text-emerald-600'
+                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+            }`}
+          >
+            Social Posts
+          </button>
+          <button
+            onClick={() => setActiveTab('media')}
+            className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'media'
+                ? 'border-emerald-500 text-emerald-600'
+                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+            }`}
+          >
+            Media
+          </button>
+          <button
+            onClick={() => setActiveTab('groups')}
+            className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm ${
+              activeTab === 'groups'
+                ? 'border-emerald-500 text-emerald-600'
+                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+            }`}
+          >
+            Groups
+          </button>
+        </nav>
       </div>
 
       <div className="grid gap-6">
@@ -72,42 +140,130 @@ export function SocialFeed() {
         )}
         {loading ? (
           <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm text-sm text-slate-500">
-            Loading feed...
-          </div>
-        ) : announcements.length === 0 ? (
-          <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm text-sm text-slate-500">
-            No announcements found right now.
+            Loading...
           </div>
         ) : (
-          (announcements || []).map((announcement) => (
-            <article
-              key={announcement.id}
-              className={`bg-white p-6 rounded-lg border shadow-sm ${announcement.is_pinned ? 'border-emerald-500' : 'border-slate-200'}`}
-            >
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getTypeColor(announcement.announcement_type)}`}>
-                      {announcement?.announcement_type?.replace('_', ' ').toUpperCase() || 'NEWS'}
-                    </span>
-                    {announcement?.is_pinned && (
-                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-emerald-600 text-white">
-                        Pinned
-                      </span>
-                    )}
+          <>
+            {activeTab === 'announcements' && (
+              <div className="space-y-4">
+                {announcements.length === 0 ? (
+                  <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm text-sm text-slate-500">
+                    No announcements found right now.
                   </div>
-                  <h2 className="text-lg font-semibold text-slate-900">{announcement?.title}</h2>
-                </div>
-                <div className="text-sm text-slate-500 tabular-nums text-right">
-                  {formatDate(announcement?.publish_date || announcement?.created_at)}
-                </div>
-              </div>
+                ) : (
+                  (announcements || []).map((announcement) => (
+                    <article
+                      key={announcement.id}
+                      className={`bg-white p-6 rounded-lg border shadow-sm ${announcement.is_pinned ? 'border-emerald-500' : 'border-slate-200'}`}
+                    >
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getTypeColor(announcement.announcement_type)}`}>
+                              {announcement?.announcement_type?.replace('_', ' ').toUpperCase() || 'NEWS'}
+                            </span>
+                            {announcement?.is_pinned && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-emerald-600 text-white">
+                                Pinned
+                              </span>
+                            )}
+                          </div>
+                          <h2 className="text-lg font-semibold text-slate-900">{announcement?.title}</h2>
+                        </div>
+                        <div className="text-sm text-slate-500 tabular-nums text-right">
+                          {formatDate(announcement?.publish_date || announcement?.created_at)}
+                        </div>
+                      </div>
 
-              <div className="prose prose-sm prose-slate max-w-none text-slate-700">
-                <p className="whitespace-pre-wrap">{announcement?.content}</p>
+                      <div className="prose prose-sm prose-slate max-w-none text-slate-700">
+                        <p className="whitespace-pre-wrap">{announcement?.content}</p>
+                      </div>
+                    </article>
+                  ))
+                )}
               </div>
-            </article>
-          ))
+            )}
+
+            {activeTab === 'social' && (
+              <div className="space-y-4">
+                {posts.length === 0 ? (
+                  <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm text-sm text-slate-500">
+                    No social media posts found.
+                  </div>
+                ) : (
+                  posts.map(post => (
+                    <article key={post.id} className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-500">
+                            {post.account_id}
+                          </div>
+                          <div>
+                            <div className="font-semibold text-slate-900">User {post.account_id}</div>
+                            <div className="text-xs text-slate-500">{formatDate(post.created_at)}</div>
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-slate-700 mb-4 whitespace-pre-wrap">{post.content}</p>
+                    </article>
+                  ))
+                )}
+              </div>
+            )}
+
+            {activeTab === 'media' && (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {media.length === 0 ? (
+                  <div className="col-span-full bg-white p-6 rounded-lg border border-slate-200 shadow-sm text-sm text-slate-500">
+                    No media items found.
+                  </div>
+                ) : (
+                  media.map(item => (
+                    <div key={item.id} className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+                      <div className="aspect-square bg-slate-100 flex items-center justify-center p-4">
+                        {item.media_type === 'image' ? (
+                          <div className="w-full h-full bg-slate-200 rounded object-cover" />
+                        ) : (
+                          <div className="w-full h-full bg-slate-300 rounded flex items-center justify-center">Video</div>
+                        )}
+                      </div>
+                      <div className="p-3">
+                        <div className="font-medium text-sm text-slate-900 truncate">{item.media_name || 'Untitled'}</div>
+                        <div className="text-xs text-slate-500 capitalize">{item.media_type}</div>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+
+            {activeTab === 'groups' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {groups.length === 0 ? (
+                    <div className="col-span-full bg-white p-6 rounded-lg border border-slate-200 shadow-sm text-sm text-slate-500">
+                      No groups found.
+                    </div>
+                  ) : (
+                    groups.map(group => (
+                      <div key={group.id} className="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
+                        <h3 className="font-bold text-lg text-slate-900">{group.name}</h3>
+                        <p className="text-sm text-slate-600 mt-1 line-clamp-2">{group.description || 'No description'}</p>
+                        <div className="mt-4 flex items-center gap-2">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800 capitalize border border-slate-200">
+                            {group.group_type}
+                          </span>
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-800 capitalize border border-slate-200">
+                            {group.is_active ? 'Active' : 'Inactive'}
+                          </span>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

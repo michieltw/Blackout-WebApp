@@ -11,6 +11,8 @@ type LeagueBylaw = Database['public']['Tables']['league_bylaws']['Row']
 type RuleEnforcementLog = Database['public']['Tables']['rule_enforcement_log']['Row']
 type Appeal = Database['public']['Tables']['appeals']['Row']
 type IncidentReport = Database['public']['Tables']['incident_reports']['Row']
+type IncidentInvestigation = Database['public']['Tables']['incident_investigation']['Row']
+type AppealWorkflowStep = Database['public']['Tables']['appeal_workflow_steps']['Row']
 
 export function RulesAndDiscipline() {
   const [suspensions, setSuspensions] = useState<Suspension[]>([])
@@ -20,6 +22,8 @@ export function RulesAndDiscipline() {
   const [_ruleEnforcementLogs, setRuleEnforcementLogs] = useState<RuleEnforcementLog[]>([])
   const [appeals, setAppeals] = useState<Appeal[]>([])
   const [incidentReports, setIncidentReports] = useState<IncidentReport[]>([])
+  const [investigations, setInvestigations] = useState<IncidentInvestigation[]>([])
+  const [appealSteps, setAppealSteps] = useState<AppealWorkflowStep[]>([])
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -34,7 +38,9 @@ export function RulesAndDiscipline() {
           bylawsData,
           enforcementData,
           appealsData,
-          incidentsData
+          incidentsData,
+          investigationsData,
+          appealStepsData
         ] = await Promise.all([
           fetchTableData('suspensions'),
           fetchTableData('player_discipline'),
@@ -42,7 +48,9 @@ export function RulesAndDiscipline() {
           fetchTableData('league_bylaws'),
           fetchTableData('rule_enforcement_log'),
           fetchTableData('appeals'),
-          fetchTableData('incident_reports')
+          fetchTableData('incident_reports'),
+          fetchTableData('incident_investigation'),
+          fetchTableData('appeal_workflow_steps')
         ])
 
         setSuspensions(suspensionsData || [])
@@ -52,6 +60,8 @@ export function RulesAndDiscipline() {
         setRuleEnforcementLogs(enforcementData || [])
         setAppeals(appealsData || [])
         setIncidentReports(incidentsData || [])
+        setInvestigations(investigationsData || [])
+        setAppealSteps(appealStepsData || [])
       } catch (err: any) {
         setError(err.message || 'Failed to fetch rules and discipline data')
       } finally {
@@ -234,6 +244,67 @@ export function RulesAndDiscipline() {
             </div>
           </div>
 
+
+
+          {/* Incident Investigations */}
+          <div className="grid gap-4 mt-8">
+            <h2 className="text-lg font-semibold text-slate-800">Incident Investigations</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+              {investigations.length === 0 ? (
+                <div className="text-sm text-slate-500">No investigations found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Incident ID</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Findings</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {investigations.map((inv) => (
+                      <TableRow key={inv.id}>
+                        <TableCell className="tabular-nums">{inv.id}</TableCell>
+                        <TableCell className="font-medium text-slate-900 tabular-nums">{inv.incident_id}</TableCell>
+                        <TableCell className="capitalize">{inv.status || '-'}</TableCell>
+                        <TableCell className="text-slate-500 line-clamp-2">{inv.findings || '-'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
+
+          {/* Appeal Workflow Steps */}
+          <div className="grid gap-4 mt-8">
+            <h2 className="text-lg font-semibold text-slate-800">Appeal Workflow Steps</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+              {appealSteps.length === 0 ? (
+                <div className="text-sm text-slate-500">No appeal steps found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Appeal ID</TableHead>
+                    <TableHead>Step Name</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Date</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {appealSteps.map((step) => (
+                      <TableRow key={step.id}>
+                        <TableCell className="tabular-nums">{step.id}</TableCell>
+                        <TableCell className="font-medium text-slate-900 tabular-nums">{step.appeal_id}</TableCell>
+                        <TableCell className="font-medium text-slate-900">{step.action}</TableCell>
+                        <TableCell className="capitalize">{step.notes || '-'}</TableCell>
+                        <TableCell className="tabular-nums text-slate-500">{step.timestamp || '-'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
         </>
       )}
     </div>
