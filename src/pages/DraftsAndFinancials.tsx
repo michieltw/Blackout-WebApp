@@ -12,6 +12,7 @@ type Expense = Database['public']['Tables']['expenses']['Row']
 type ContractTerm = Database['public']['Tables']['contract_terms']['Row']
 type PlayerContractHistory = Database['public']['Tables']['player_contract_history']['Row']
 type DraftTeam = Database['public']['Tables']['draft_teams']['Row']
+type PlayerDraftOld = Database['public']['Tables']['player_draft']['Row']
 
 export function DraftsAndFinancials() {
   const [drafts, setDrafts] = useState<PlayerDraft[]>([])
@@ -23,6 +24,7 @@ export function DraftsAndFinancials() {
   const [contractTerms, setContractTerms] = useState<ContractTerm[]>([])
   const [contractHistory, setContractHistory] = useState<PlayerContractHistory[]>([])
   const [draftTeams, setDraftTeams] = useState<DraftTeam[]>([])
+  const [oldDrafts, setOldDrafts] = useState<PlayerDraftOld[]>([])
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -38,7 +40,8 @@ export function DraftsAndFinancials() {
           expensesData,
           termsData,
           historyData,
-          teamsData
+          teamsData,
+          oldDraftsData
         ] = await Promise.all([
           fetchTableData('player_drafts'),
           fetchTableData('draft_picks'),
@@ -47,7 +50,8 @@ export function DraftsAndFinancials() {
           fetchTableData('expenses'),
           fetchTableData('contract_terms'),
           fetchTableData('player_contract_history'),
-          fetchTableData('draft_teams')
+          fetchTableData('draft_teams'),
+          fetchTableData('player_draft')
         ])
 
         setDrafts(draftsData || [])
@@ -58,6 +62,7 @@ export function DraftsAndFinancials() {
         setContractTerms(termsData || [])
         setContractHistory(historyData || [])
         setDraftTeams(teamsData || [])
+        setOldDrafts(oldDraftsData || [])
       } catch (err: any) {
         setError(err.message || 'Failed to fetch drafts and financials data')
       } finally {
@@ -324,6 +329,41 @@ export function DraftsAndFinancials() {
                         <TableCell className="tabular-nums">{ch.season_id}</TableCell>
                         <TableCell className="tabular-nums">{ch.start_date}</TableCell>
                         <TableCell className="capitalize text-slate-500">{ch.status || '-'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
+
+          {/* Player Draft (Old) */}
+          <div className="grid gap-4">
+            <h2 className="text-lg font-semibold text-slate-800">Legacy Player Drafts</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+              {oldDrafts.length === 0 ? (
+                <div className="text-sm text-slate-500">No legacy player drafts found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Season ID</TableHead>
+                    <TableHead>Division ID</TableHead>
+                    <TableHead>Team ID</TableHead>
+                    <TableHead>Player ID</TableHead>
+                    <TableHead>Round</TableHead>
+                    <TableHead>Pick Order</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {oldDrafts.map((d) => (
+                      <TableRow key={d.id}>
+                        <TableCell className="tabular-nums">{d.id}</TableCell>
+                        <TableCell className="tabular-nums">{d.season_id}</TableCell>
+                        <TableCell className="tabular-nums">{d.division_id}</TableCell>
+                        <TableCell className="tabular-nums">{d.team_id}</TableCell>
+                        <TableCell className="tabular-nums">{d.player_id || '-'}</TableCell>
+                        <TableCell className="tabular-nums">{d.round}</TableCell>
+                        <TableCell className="tabular-nums">{d.pick_order}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

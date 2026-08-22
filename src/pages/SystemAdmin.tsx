@@ -19,6 +19,7 @@ type Job = DB['public']['Tables']['jobs']['Row']
 type BulkImport = DB['public']['Tables']['bulk_import_staging']['Row']
 type SheetBuildOrder = DB['public']['Tables']['sheet_build_order']['Row']
 type FirstTimeSetup = DB['public']['Tables']['first_time_setup']['Row']
+type SchemaTable = DB['public']['Tables']['schema_tables']['Row']
 
 export function SystemAdmin() {
   const [activeTab, setActiveTab] = useState<'settings' | 'preferences' | 'roles' | 'data'>('settings')
@@ -47,6 +48,7 @@ export function SystemAdmin() {
   const [bulkImports, setBulkImports] = useState<BulkImport[]>([])
   const [sheetBuildOrders, setSheetBuildOrders] = useState<SheetBuildOrder[]>([])
   const [firstTimeSetups, setFirstTimeSetups] = useState<FirstTimeSetup[]>([])
+  const [schemaTables, setSchemaTables] = useState<SchemaTable[]>([])
   const [isLoadingData, setIsLoadingData] = useState(true)
 
   useEffect(() => {
@@ -95,18 +97,20 @@ export function SystemAdmin() {
     } else if (activeTab === 'data') {
       const loadData = async () => {
         setIsLoadingData(true)
-        const [archiveData, jobsData, bulkData, sheetData, setupData] = await Promise.all([
+        const [archiveData, jobsData, bulkData, sheetData, setupData, schemaData] = await Promise.all([
           fetchTableData('archived_records'),
           fetchTableData('jobs'),
           fetchTableData('bulk_import_staging'),
           fetchTableData('sheet_build_order'),
-          fetchTableData('first_time_setup')
+          fetchTableData('first_time_setup'),
+          fetchTableData('schema_tables')
         ])
         setArchivedRecords(archiveData || [])
         setJobs(jobsData || [])
         setBulkImports(bulkData || [])
         setSheetBuildOrders(sheetData || [])
         setFirstTimeSetups(setupData || [])
+        setSchemaTables(schemaData || [])
         setIsLoadingData(false)
       }
       loadData()
@@ -754,6 +758,55 @@ export function SystemAdmin() {
               </div>
             )}
           </div>
+
+          {/* Schema Tables */}
+          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            <div className="p-6 border-b border-slate-200">
+              <div className="flex items-center gap-2">
+                <Database className="w-5 h-5 text-slate-600" />
+                <h2 className="text-lg font-semibold text-slate-900">Database Schema Tables</h2>
+              </div>
+            </div>
+            {isLoadingData ? (
+              <div className="p-6 text-center text-slate-500">Loading...</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm text-left">
+                  <thead className="text-xs text-slate-500 uppercase bg-slate-50">
+                    <tr>
+                      <th className="px-6 py-3">Table Name</th>
+                      <th className="px-6 py-3">Category</th>
+                      <th className="px-6 py-3">Rows</th>
+                      <th className="px-6 py-3">Core</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200">
+                    {schemaTables.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="px-6 py-4 text-center text-slate-500">No schema tables defined.</td>
+                      </tr>
+                    ) : (
+                      schemaTables.map(st => (
+                        <tr key={st.id} className="hover:bg-slate-50">
+                          <td className="px-6 py-4 font-medium text-slate-900">{st.table_name}</td>
+                          <td className="px-6 py-4 capitalize">{st.table_category?.replace(/_/g, ' ') || '-'}</td>
+                          <td className="px-6 py-4 tabular-nums">{st.row_count || 0}</td>
+                          <td className="px-6 py-4">
+                            {st.is_core_table ? (
+                              <span className="text-emerald-600">Yes</span>
+                            ) : (
+                              <span className="text-slate-400">No</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
         </div>
       )}
     </div>

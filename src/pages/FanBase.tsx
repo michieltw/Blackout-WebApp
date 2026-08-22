@@ -13,6 +13,12 @@ type MembershipTier = Database['public']['Tables']['membership_tiers']['Row']
 type Membership = Database['public']['Tables']['memberships']['Row']
 type FanClubMember = Database['public']['Tables']['fan_club_members']['Row']
 
+type MembershipBenefit = Database['public']['Tables']['membership_benefits']['Row']
+type MembershipFee = Database['public']['Tables']['membership_fees']['Row']
+type MembershipHistory = Database['public']['Tables']['membership_history']['Row']
+type MembershipLookup = Database['public']['Tables']['membership_lookup']['Row']
+type MemberStatusLog = Database['public']['Tables']['member_status_log']['Row']
+
 export function FanBase() {
   const [fanProfiles, setFanProfiles] = useState<FanProfile[]>([])
   const [fanMemberships, setFanMemberships] = useState<FanMembership[]>([])
@@ -22,6 +28,12 @@ export function FanBase() {
   const [membershipTiers, setMembershipTiers] = useState<MembershipTier[]>([])
   const [memberships, setMemberships] = useState<Membership[]>([])
   const [fanClubMembers, setFanClubMembers] = useState<FanClubMember[]>([])
+
+  const [membershipBenefits, setMembershipBenefits] = useState<MembershipBenefit[]>([])
+  const [membershipFees, setMembershipFees] = useState<MembershipFee[]>([])
+  const [membershipHistory, setMembershipHistory] = useState<MembershipHistory[]>([])
+  const [membershipLookup, setMembershipLookup] = useState<MembershipLookup[]>([])
+  const [memberStatusLog, setMemberStatusLog] = useState<MemberStatusLog[]>([])
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -37,7 +49,12 @@ export function FanBase() {
           fcData,
           mtData,
           membershipsData,
-          fanClubMembersData
+          fanClubMembersData,
+          mbData,
+          mfData,
+          mhData,
+          mlData,
+          mslData
         ] = await Promise.all([
           fetchTableData('fan_profiles'),
           fetchTableData('fan_memberships'),
@@ -46,7 +63,12 @@ export function FanBase() {
           fetchTableData('fan_clubs'),
           fetchTableData('membership_tiers'),
           fetchTableData('memberships'),
-          fetchTableData('fan_club_members')
+          fetchTableData('fan_club_members'),
+          fetchTableData('membership_benefits'),
+          fetchTableData('membership_fees'),
+          fetchTableData('membership_history'),
+          fetchTableData('membership_lookup'),
+          fetchTableData('member_status_log')
         ])
 
         setFanProfiles(fpData || [])
@@ -57,6 +79,11 @@ export function FanBase() {
         setMembershipTiers(mtData || [])
         setMemberships(membershipsData || [])
         setFanClubMembers(fanClubMembersData || [])
+        setMembershipBenefits(mbData || [])
+        setMembershipFees(mfData || [])
+        setMembershipHistory(mhData || [])
+        setMembershipLookup(mlData || [])
+        setMemberStatusLog(mslData || [])
       } catch (err: any) {
         setError(err.message || 'Failed to fetch fan base data')
       } finally {
@@ -330,6 +357,157 @@ export function FanBase() {
                         <TableCell className="tabular-nums">{member.user_id}</TableCell>
                         <TableCell className="capitalize">{member.role || 'Member'}</TableCell>
                         <TableCell className="tabular-nums text-slate-500">{member.join_date}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
+
+          {/* Membership Benefits */}
+          <div className="grid gap-4">
+            <h2 className="text-lg font-semibold text-slate-800">Membership Benefits</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm overflow-x-auto">
+              {membershipBenefits.length === 0 ? (
+                <div className="text-sm text-slate-500">No membership benefits found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Tier ID</TableHead>
+                    <TableHead>Benefit Name</TableHead>
+                    <TableHead>Description</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {membershipBenefits.map((mb) => (
+                      <TableRow key={mb.id}>
+                        <TableCell className="tabular-nums">{mb.id}</TableCell>
+                        <TableCell className="font-medium text-slate-900 tabular-nums">{mb.tier_id}</TableCell>
+                        <TableCell className="text-slate-900">{mb.benefit_name}</TableCell>
+                        <TableCell className="text-slate-500">{mb.benefit_description || '-'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
+
+          {/* Membership Fees */}
+          <div className="grid gap-4">
+            <h2 className="text-lg font-semibold text-slate-800">Membership Fees</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm overflow-x-auto">
+              {membershipFees.length === 0 ? (
+                <div className="text-sm text-slate-500">No membership fees found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Membership ID</TableHead>
+                    <TableHead>Fee Amount</TableHead>
+                    <TableHead>Fee Type</TableHead>
+                    <TableHead>Payment Method</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {membershipFees.map((mf) => (
+                      <TableRow key={mf.id}>
+                        <TableCell className="tabular-nums">{mf.id}</TableCell>
+                        <TableCell className="font-medium text-slate-900 tabular-nums">{mf.membership_id}</TableCell>
+                        <TableCell className="text-slate-500 tabular-nums">{mf.fee_amount}</TableCell>
+                        <TableCell className="text-slate-500">{mf.fee_type}</TableCell>
+                        <TableCell className="text-slate-500">{mf.payment_method || '-'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
+
+          {/* Membership History */}
+          <div className="grid gap-4">
+            <h2 className="text-lg font-semibold text-slate-800">Membership History</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm overflow-x-auto">
+              {membershipHistory.length === 0 ? (
+                <div className="text-sm text-slate-500">No membership history found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Person ID</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Start Date</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {membershipHistory.map((mh) => (
+                      <TableRow key={mh.id}>
+                        <TableCell className="tabular-nums">{mh.id}</TableCell>
+                        <TableCell className="font-medium text-slate-900 tabular-nums">{mh.person_id}</TableCell>
+                        <TableCell className="text-slate-500 capitalize">{mh.status}</TableCell>
+                        <TableCell className="text-slate-500 tabular-nums">{mh.start_date}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
+
+          {/* Membership Lookup */}
+          <div className="grid gap-4">
+            <h2 className="text-lg font-semibold text-slate-800">Membership Lookup</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm overflow-x-auto">
+              {membershipLookup.length === 0 ? (
+                <div className="text-sm text-slate-500">No membership lookup found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Membership ID</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Tier</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {membershipLookup.map((ml) => (
+                      <TableRow key={ml.id}>
+                        <TableCell className="tabular-nums">{ml.id}</TableCell>
+                        <TableCell className="font-medium text-slate-900 tabular-nums">{ml.membership_id}</TableCell>
+                        <TableCell className="text-slate-900">{ml.first_name} {ml.last_name}</TableCell>
+                        <TableCell className="text-slate-500 capitalize">{ml.tier_level}</TableCell>
+                        <TableCell className="text-slate-500 capitalize">{ml.status}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
+
+          {/* Member Status Log */}
+          <div className="grid gap-4">
+            <h2 className="text-lg font-semibold text-slate-800">Member Status Log</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm overflow-x-auto">
+              {memberStatusLog.length === 0 ? (
+                <div className="text-sm text-slate-500">No member status log found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Membership ID</TableHead>
+                    <TableHead>Old Status</TableHead>
+                    <TableHead>New Status</TableHead>
+                    <TableHead>Changed At</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {memberStatusLog.map((msl) => (
+                      <TableRow key={msl.id}>
+                        <TableCell className="tabular-nums">{msl.id}</TableCell>
+                        <TableCell className="font-medium text-slate-900 tabular-nums">{msl.membership_id}</TableCell>
+                        <TableCell className="text-slate-500">{msl.old_status}</TableCell>
+                        <TableCell className="text-slate-500">{msl.new_status}</TableCell>
+                        <TableCell className="text-slate-500 tabular-nums">{msl.changed_at}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

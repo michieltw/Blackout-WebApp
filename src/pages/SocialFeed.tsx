@@ -7,6 +7,8 @@ type Announcement = Database['public']['Tables']['announcements']['Row']
 type SocialMediaPost = Database['public']['Tables']['social_media_posts']['Row']
 type Media = Database['public']['Tables']['media']['Row']
 type Group = Database['public']['Tables']['groups']['Row']
+type AnnouncementAudience = Database['public']['Tables']['announcement_audience']['Row']
+type GroupMember = Database['public']['Tables']['group_members']['Row']
 
 export function SocialFeed() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
@@ -15,6 +17,10 @@ export function SocialFeed() {
   const [posts, setPosts] = useState<SocialMediaPost[]>([])
   const [media, setMedia] = useState<Media[]>([])
   const [groups, setGroups] = useState<Group[]>([])
+
+  const [announcementAudiences, setAnnouncementAudiences] = useState<AnnouncementAudience[]>([])
+  const [groupMembers, setGroupMembers] = useState<GroupMember[]>([])
+
   const [activeTab, setActiveTab] = useState('announcements')
 
   useEffect(() => {
@@ -24,12 +30,16 @@ export function SocialFeed() {
           announcementsData,
           postsData,
           mediaData,
-          groupsData
+          groupsData,
+          audienceData,
+          groupMembersData
         ] = await Promise.all([
           fetchTableData('announcements'),
           fetchTableData('social_media_posts'),
           fetchTableData('media'),
-          fetchTableData('groups')
+          fetchTableData('groups'),
+          fetchTableData('announcement_audience'),
+          fetchTableData('group_members')
         ])
 
         // Sort by publish date descending to show newest first
@@ -43,6 +53,8 @@ export function SocialFeed() {
         setPosts(postsData || [])
         setMedia(mediaData || [])
         setGroups(groupsData || [])
+        setAnnouncementAudiences(audienceData || [])
+        setGroupMembers(groupMembersData || [])
 
       } catch (err: any) {
         setError(err.message || 'Failed to fetch data')
@@ -260,6 +272,66 @@ export function SocialFeed() {
                       </div>
                     ))
                   )}
+                </div>
+
+                <h3 className="text-lg font-semibold text-slate-800 pt-4">Group Members</h3>
+                <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm overflow-x-auto">
+                  {groupMembers.length === 0 ? (
+                    <div className="text-sm text-slate-500">No group members found.</div>
+                  ) : (
+                    <table className="min-w-full divide-y divide-slate-200">
+                      <thead>
+                        <tr>
+                          <th className="px-3 py-3.5 text-left text-sm font-semibold text-slate-900">ID</th>
+                          <th className="px-3 py-3.5 text-left text-sm font-semibold text-slate-900">Group ID</th>
+                          <th className="px-3 py-3.5 text-left text-sm font-semibold text-slate-900">Type</th>
+                          <th className="px-3 py-3.5 text-left text-sm font-semibold text-slate-900">Member ID</th>
+                          <th className="px-3 py-3.5 text-left text-sm font-semibold text-slate-900">Role</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-200 bg-white">
+                        {groupMembers.map((member) => (
+                          <tr key={member.id}>
+                            <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-500 tabular-nums">{member.id}</td>
+                            <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-500 tabular-nums">{member.group_id}</td>
+                            <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-500 capitalize">{member.member_type}</td>
+                            <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-500 tabular-nums">{member.member_id}</td>
+                            <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-500">{member.role || '-'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'announcements' && announcementAudiences.length > 0 && (
+              <div className="mt-8 space-y-6">
+                <h3 className="text-lg font-semibold text-slate-800">Announcement Audiences</h3>
+                <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm overflow-x-auto">
+                  <table className="min-w-full divide-y divide-slate-200">
+                    <thead>
+                      <tr>
+                        <th className="px-3 py-3.5 text-left text-sm font-semibold text-slate-900">ID</th>
+                        <th className="px-3 py-3.5 text-left text-sm font-semibold text-slate-900">Announcement ID</th>
+                        <th className="px-3 py-3.5 text-left text-sm font-semibold text-slate-900">Audience Type</th>
+                        <th className="px-3 py-3.5 text-left text-sm font-semibold text-slate-900">Target Entity Type</th>
+                        <th className="px-3 py-3.5 text-left text-sm font-semibold text-slate-900">Target Entity ID</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-200 bg-white">
+                      {announcementAudiences.map((audience) => (
+                        <tr key={audience.id}>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-500 tabular-nums">{audience.id}</td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-500 tabular-nums">{audience.announcement_id}</td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-500 capitalize">{audience.audience_type}</td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-500">{audience.target_entity_type || '-'}</td>
+                          <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-500 tabular-nums">{audience.target_entity_id || '-'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             )}
