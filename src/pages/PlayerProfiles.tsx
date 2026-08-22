@@ -5,19 +5,25 @@ import { Table, TableHeader, TableHead, TableBody, TableRow, TableCell } from '@
 import { Button } from '@/components/ui/Button'
 
 type PlayerProfile = Database['public']['Tables']['player_profiles']['Row']
+type Player = Database['public']['Tables']['players']['Row']
 
 export function PlayerProfiles() {
   const [profiles, setProfiles] = useState<PlayerProfile[]>([])
+  const [players, setPlayers] = useState<Player[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
       try {
-        const data = await fetchTableData('player_profiles')
-        setProfiles(data || [])
+        const [profilesData, playersData] = await Promise.all([
+          fetchTableData('player_profiles'),
+          fetchTableData('players')
+        ])
+        setProfiles(profilesData || [])
+        setPlayers(playersData || [])
       } catch (err: any) {
-        setError(err.message || 'Failed to fetch player profiles')
+        setError(err.message || 'Failed to fetch player data')
       } finally {
         setLoading(false)
       }
@@ -80,6 +86,40 @@ export function PlayerProfiles() {
                       )}
                     </TableCell>
                     <TableCell className="text-slate-500">{profile?.preferred_positions || '-'}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
+        </div>
+      </div>
+
+      <div className="grid gap-6">
+        <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+          <h2 className="text-lg font-semibold text-slate-800 mb-4">Players Base Info</h2>
+          {players.length === 0 ? (
+            <div className="text-sm text-slate-500">No players found.</div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableHead>Player ID</TableHead>
+                <TableHead>Person ID</TableHead>
+                <TableHead>Position</TableHead>
+                <TableHead>Handedness</TableHead>
+                <TableHead>Height (cm)</TableHead>
+                <TableHead>Weight (kg)</TableHead>
+                <TableHead>Draft Year</TableHead>
+              </TableHeader>
+              <TableBody>
+                {players.map((player) => (
+                  <TableRow key={player.id}>
+                    <TableCell className="tabular-nums">{player.id}</TableCell>
+                    <TableCell className="tabular-nums">{player.person_id}</TableCell>
+                    <TableCell className="text-slate-700 capitalize">{player.position || '-'}</TableCell>
+                    <TableCell className="text-slate-700 capitalize">{player.handedness || '-'}</TableCell>
+                    <TableCell className="text-slate-500 tabular-nums">{player.height_cm || '-'}</TableCell>
+                    <TableCell className="text-slate-500 tabular-nums">{player.weight_kg || '-'}</TableCell>
+                    <TableCell className="text-slate-500 tabular-nums">{player.draft_year || '-'}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

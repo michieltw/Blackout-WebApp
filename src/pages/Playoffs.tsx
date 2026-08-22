@@ -12,6 +12,10 @@ type PlayoffRound = Database['public']['Tables']['playoff_rounds']['Row']
 type PlayoffSeries = Database['public']['Tables']['playoff_series']['Row']
 type PlayoffSeriesGame = Database['public']['Tables']['playoff_series_games']['Row']
 
+type Bracket = Database['public']['Tables']['brackets']['Row']
+type BracketTeam = Database['public']['Tables']['bracket_teams']['Row']
+type BracketMatch = Database['public']['Tables']['bracket_matches']['Row']
+
 export function Playoffs() {
   const [competitions, setCompetitions] = useState<Competition[]>([])
   const [competitionTeams, setCompetitionTeams] = useState<CompetitionTeam[]>([])
@@ -20,6 +24,11 @@ export function Playoffs() {
   const [playoffRounds, setPlayoffRounds] = useState<PlayoffRound[]>([])
   const [playoffSeries, setPlayoffSeries] = useState<PlayoffSeries[]>([])
   const [playoffSeriesGames, setPlayoffSeriesGames] = useState<PlayoffSeriesGame[]>([])
+
+  const [brackets, setBrackets] = useState<Bracket[]>([])
+  const [bracketTeams, setBracketTeams] = useState<BracketTeam[]>([])
+  const [bracketMatches, setBracketMatches] = useState<BracketMatch[]>([])
+
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -33,7 +42,10 @@ export function Playoffs() {
           seedingsData,
           roundsData,
           seriesData,
-          seriesGamesData
+          seriesGamesData,
+          bsData,
+          btData,
+          bmData
         ] = await Promise.all([
           fetchTableData('competitions'),
           fetchTableData('competition_teams'),
@@ -41,7 +53,10 @@ export function Playoffs() {
           fetchTableData('playoff_seedings'),
           fetchTableData('playoff_rounds'),
           fetchTableData('playoff_series'),
-          fetchTableData('playoff_series_games')
+          fetchTableData('playoff_series_games'),
+          fetchTableData('brackets'),
+          fetchTableData('bracket_teams'),
+          fetchTableData('bracket_matches')
         ])
 
         setCompetitions(compsData || [])
@@ -51,6 +66,9 @@ export function Playoffs() {
         setPlayoffRounds(roundsData || [])
         setPlayoffSeries(seriesData || [])
         setPlayoffSeriesGames(seriesGamesData || [])
+        setBrackets(bsData || [])
+        setBracketTeams(btData || [])
+        setBracketMatches(bmData || [])
       } catch (err: any) {
         setError(err.message || 'Failed to fetch playoff data')
       } finally {
@@ -288,6 +306,101 @@ export function Playoffs() {
                         <TableCell className="font-medium text-slate-900 tabular-nums">{game.playoff_series_id}</TableCell>
                         <TableCell className="font-medium text-slate-900 tabular-nums">{game.game_id}</TableCell>
                         <TableCell className="text-slate-500 tabular-nums">{game.game_number_in_series || '-'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
+
+          {/* Brackets */}
+          <div className="grid gap-4">
+            <h2 className="text-lg font-semibold text-slate-800">Brackets</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm overflow-x-auto">
+              {brackets.length === 0 ? (
+                <div className="text-sm text-slate-500">No brackets found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Competition ID</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {brackets.map((bracket) => (
+                      <TableRow key={bracket.id}>
+                        <TableCell className="tabular-nums">{bracket.id}</TableCell>
+                        <TableCell className="font-medium text-slate-900">{bracket.bracket_name}</TableCell>
+                        <TableCell className="tabular-nums text-slate-500">{bracket.competition_id}</TableCell>
+                        <TableCell className="text-slate-500 capitalize">{bracket.bracket_type}</TableCell>
+                        <TableCell className="text-slate-500 capitalize">{bracket.bracket_status}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
+
+          {/* Bracket Teams */}
+          <div className="grid gap-4">
+            <h2 className="text-lg font-semibold text-slate-800">Bracket Teams</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm overflow-x-auto">
+              {bracketTeams.length === 0 ? (
+                <div className="text-sm text-slate-500">No bracket teams found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Bracket ID</TableHead>
+                    <TableHead>Team ID</TableHead>
+                    <TableHead>Seed Number</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {bracketTeams.map((bt) => (
+                      <TableRow key={bt.id}>
+                        <TableCell className="tabular-nums">{bt.id}</TableCell>
+                        <TableCell className="tabular-nums text-slate-500">{bt.bracket_id}</TableCell>
+                        <TableCell className="tabular-nums text-slate-500">{bt.team_id}</TableCell>
+                        <TableCell className="tabular-nums text-slate-500">{bt.seed_number || '-'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </div>
+          </div>
+
+          {/* Bracket Matches */}
+          <div className="grid gap-4">
+            <h2 className="text-lg font-semibold text-slate-800">Bracket Matches</h2>
+            <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm overflow-x-auto">
+              {bracketMatches.length === 0 ? (
+                <div className="text-sm text-slate-500">No bracket matches found.</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Bracket ID</TableHead>
+                    <TableHead>Round</TableHead>
+                    <TableHead>Match Number</TableHead>
+                    <TableHead>Team A</TableHead>
+                    <TableHead>Team B</TableHead>
+                    <TableHead>Winner</TableHead>
+                  </TableHeader>
+                  <TableBody>
+                    {bracketMatches.map((bm) => (
+                      <TableRow key={bm.id}>
+                        <TableCell className="tabular-nums">{bm.id}</TableCell>
+                        <TableCell className="tabular-nums text-slate-500">{bm.bracket_id}</TableCell>
+                        <TableCell className="tabular-nums text-slate-500">{bm.round_number || '-'}</TableCell>
+                        <TableCell className="tabular-nums text-slate-500">{bm.match_number || '-'}</TableCell>
+                        <TableCell className="tabular-nums text-slate-500">{bm.team_a_id || '-'}</TableCell>
+                        <TableCell className="tabular-nums text-slate-500">{bm.team_b_id || '-'}</TableCell>
+                        <TableCell className="tabular-nums text-slate-500">{bm.winner_team_id || '-'}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
