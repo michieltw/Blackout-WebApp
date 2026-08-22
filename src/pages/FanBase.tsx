@@ -36,11 +36,9 @@ export function FanBase() {
   const [memberStatusLog, setMemberStatusLog] = useState<MemberStatusLog[]>([])
 
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      try {
         const [
           fpData,
           fmData,
@@ -84,11 +82,7 @@ export function FanBase() {
         setMembershipHistory(mhData || [])
         setMembershipLookup(mlData || [])
         setMemberStatusLog(mslData || [])
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch fan base data')
-      } finally {
         setLoading(false)
-      }
     }
     load()
   }, [])
@@ -103,11 +97,6 @@ export function FanBase() {
         </div>
       </div>
 
-      {error && (
-        <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-md">
-          {error}
-        </div>
-      )}
 
       {loading ? (
         <div className="text-sm text-slate-500">Loading data...</div>

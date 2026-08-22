@@ -28,11 +28,9 @@ export function Commerce() {
   const [playerSticks, setPlayerSticks] = useState<PlayerStick[]>([])
 
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      try {
         const [
           tiData, tsData, mpData, moData, moiData,
           eqData, eaData, emData, peData, psData
@@ -49,21 +47,17 @@ export function Commerce() {
           fetchTableData('player_sticks')
         ])
 
-        setTicketInventory(tiData || [])
-        setTicketSales(tsData || [])
+        setTicketInventory((tiData || []).slice(0, 10))
+        setTicketSales((tsData || []).slice(0, 10))
         setMerchandiseProducts(mpData || [])
         setMerchandiseOrders(moData || [])
         setMerchandiseOrderItems(moiData || [])
         setEquipment(eqData || [])
         setEquipmentAssignments(eaData || [])
         setEquipmentMaintenance(emData || [])
-        setPersonalEquipment(peData || [])
-        setPlayerSticks(psData || [])
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch commerce data')
-      } finally {
+        setPersonalEquipment((peData || []).slice(0, 10))
+        setPlayerSticks((psData || []).slice(0, 10))
         setLoading(false)
-      }
     }
     load()
   }, [])
@@ -78,11 +72,6 @@ export function Commerce() {
         </div>
       </div>
 
-      {error && (
-        <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-md">
-          {error}
-        </div>
-      )}
 
       {loading ? (
         <div className="text-sm text-slate-500">Loading data...</div>
@@ -106,7 +95,7 @@ export function Commerce() {
                       <TableHead>Status</TableHead>
                     </TableHeader>
                     <TableBody>
-                      {ticketInventory.slice(0, 10).map((ti) => (
+                      {(ticketInventory || []).map((ti) => (
                         <TableRow key={ti.id}>
                           <TableCell className="font-medium text-slate-900 tabular-nums">{ti.venue_id}</TableCell>
                           <TableCell className="text-slate-500">{ti.section} {ti.row}-{ti.seat_number}</TableCell>
@@ -132,7 +121,7 @@ export function Commerce() {
                       <TableHead>Amount</TableHead>
                     </TableHeader>
                     <TableBody>
-                      {ticketSales.slice(0, 10).map((ts) => (
+                      {(ticketSales || []).map((ts) => (
                         <TableRow key={ts.id}>
                           <TableCell className="tabular-nums">{ts.id}</TableCell>
                           <TableCell className="font-medium text-slate-900 tabular-nums">{ts.game_id}</TableCell>
@@ -231,7 +220,7 @@ export function Commerce() {
                       <TableHead>Brand ID</TableHead>
                     </TableHeader>
                     <TableBody>
-                      {personalEquipment.slice(0, 10).map((pe) => (
+                      {(personalEquipment || []).map((pe) => (
                         <TableRow key={pe.id}>
                           <TableCell className="font-medium text-slate-900 tabular-nums">{pe.player_id}</TableCell>
                           <TableCell className="text-slate-500 capitalize">{pe.equipment_type}</TableCell>
@@ -255,7 +244,7 @@ export function Commerce() {
                       <TableHead>Flex/Curve</TableHead>
                     </TableHeader>
                     <TableBody>
-                      {playerSticks.slice(0, 10).map((ps) => (
+                      {(playerSticks || []).map((ps) => (
                         <TableRow key={ps.id}>
                           <TableCell className="font-medium text-slate-900 tabular-nums">{ps.player_id}</TableCell>
                           <TableCell className="text-slate-500">{ps.stick_brand}</TableCell>

@@ -18,13 +18,10 @@ export function UserManagement() {
   const [playerLookups, setPlayerLookups] = useState<PlayerLookup[]>([])
 
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function loadData() {
       setIsLoading(true)
-      setError(null)
-      try {
         if (activeTab === 'users') {
           const data = await fetchTableData('users')
           setUsers(data || [])
@@ -38,11 +35,7 @@ export function UserManagement() {
           const data = await fetchTableData('player_lookup')
           setPlayerLookups(data || [])
         }
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch data')
-      } finally {
         setIsLoading(false)
-      }
     }
     loadData()
   }, [activeTab])
@@ -100,11 +93,6 @@ export function UserManagement() {
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        {error && (
-          <div className="p-4 bg-amber-50 border-b border-amber-200 text-amber-700 text-sm">
-            {error}
-          </div>
-        )}
 
         {isLoading ? (
           <div className="p-12 text-center text-slate-500">Loading data...</div>

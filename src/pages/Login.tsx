@@ -11,16 +11,13 @@ export function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError(null)
     setMessage(null)
 
-    try {
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -30,11 +27,7 @@ export function Login() {
 
       setMessage('Successfully logged in! Redirecting...')
       setTimeout(() => navigate(from, { replace: true }), 1000)
-    } catch (err: any) {
-      setError(err.message || 'An error occurred during login')
-    } finally {
       setLoading(false)
-    }
   }
 
   return (
@@ -79,11 +72,6 @@ export function Login() {
             </div>
           </div>
 
-          {error && (
-            <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-md">
-              {error}
-            </div>
-          )}
 
           {message && (
             <div className="text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 p-3 rounded-md">

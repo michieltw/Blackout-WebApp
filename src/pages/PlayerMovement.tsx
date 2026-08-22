@@ -17,11 +17,9 @@ export function PlayerMovement() {
   const [playerTransfers, setPlayerTransfers] = useState<PlayerTransfer[]>([])
   const [movementLogs, setMovementLogs] = useState<PlayerMovementLog[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      try {
         const [
           loanData,
           waiverData,
@@ -41,11 +39,7 @@ export function PlayerMovement() {
         setTransfers(transferData || [])
         setPlayerTransfers(playerTransferData || [])
         setMovementLogs(movementLogData || [])
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch player movement data')
-      } finally {
         setLoading(false)
-      }
     }
     load()
   }, [])
@@ -57,11 +51,6 @@ export function PlayerMovement() {
         <Button variant="primary">Record Movement</Button>
       </div>
 
-      {error && (
-        <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-md">
-          {error}
-        </div>
-      )}
 
       {loading ? (
         <div className="text-sm text-slate-500">Loading data...</div>

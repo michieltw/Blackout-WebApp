@@ -122,6 +122,11 @@ export function FoundationalEntities() {
       </div>
 
       <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        {error && (
+          <div className="p-4 bg-amber-50 border-b border-amber-200 text-amber-700 text-sm">
+            {error}
+          </div>
+        )}
 
         {isLoading ? (
           <div className="p-12 text-center text-slate-500">Loading data...</div>

@@ -13,6 +13,13 @@ type StickPollResponse = DB['public']['Tables']['stick_poll_responses']['Row']
 type StickFeedback = DB['public']['Tables']['stick_feedback']['Row']
 type StickRecommendation = DB['public']['Tables']['stick_recommendations']['Row']
 
+
+function getOrderStatusStyle(status: string | undefined | null) {
+  if (status === 'delivered') return 'bg-emerald-100 text-emerald-700';
+  if (status === 'processing') return 'bg-amber-100 text-amber-700';
+  return 'bg-slate-100 text-slate-700';
+}
+
 export function SpecializedProducts() {
   const [activeTab, setActiveTab] = useState<'products' | 'polls' | 'feedback'>('products')
 
@@ -215,9 +222,7 @@ export function SpecializedProducts() {
                           <td className="px-6 py-4 font-medium tabular-nums">{formatCurrency(order.total_cost)}</td>
                           <td className="px-6 py-4">
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              order.order_status === 'delivered' ? 'bg-emerald-100 text-emerald-700' :
-                              order.order_status === 'processing' ? 'bg-amber-100 text-amber-700' :
-                              'bg-slate-100 text-slate-700'
+                              getOrderStatusStyle(order.order_status)
                             }`}>
                               {order.order_status}
                             </span>

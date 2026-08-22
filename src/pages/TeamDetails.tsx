@@ -13,11 +13,9 @@ export function TeamDetails() {
   const [farmTeams, setFarmTeams] = useState<FarmTeam[]>([])
   const [teamStaff, setTeamStaff] = useState<TeamStaff[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      try {
         const [profileData, farmData, staffData] = await Promise.all([
           fetchTableData('team_profiles'),
           fetchTableData('farm_teams'),
@@ -27,11 +25,7 @@ export function TeamDetails() {
         setTeamProfiles(profileData || [])
         setFarmTeams(farmData || [])
         setTeamStaff(staffData || [])
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch team details data')
-      } finally {
         setLoading(false)
-      }
     }
     load()
   }, [])
@@ -43,11 +37,6 @@ export function TeamDetails() {
         <Button variant="primary">Add Details</Button>
       </div>
 
-      {error && (
-        <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-md">
-          {error}
-        </div>
-      )}
 
       {loading ? (
         <div className="text-sm text-slate-500">Loading data...</div>

@@ -11,22 +11,16 @@ export function PlayerProfiles() {
   const [profiles, setProfiles] = useState<PlayerProfile[]>([])
   const [players, setPlayers] = useState<Player[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      try {
         const [profilesData, playersData] = await Promise.all([
           fetchTableData('player_profiles'),
           fetchTableData('players')
         ])
         setProfiles(profilesData || [])
         setPlayers(playersData || [])
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch player data')
-      } finally {
         setLoading(false)
-      }
     }
     load()
   }, [])
@@ -40,11 +34,6 @@ export function PlayerProfiles() {
 
       <div className="grid gap-6">
         <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
-          {error && (
-            <div className="mb-4 text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-md">
-              {error}
-            </div>
-          )}
           {loading ? (
             <div className="text-sm text-slate-500">Loading data...</div>
           ) : profiles.length === 0 ? (

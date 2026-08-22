@@ -30,11 +30,9 @@ export function DeepStatistics() {
   const [rivalryStats, setRivalryStats] = useState<RivalryStat[]>([])
 
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      try {
         const [
           psData, tsData, gsData,
           asData, stdData, vrData, rvData,
@@ -62,11 +60,7 @@ export function DeepStatistics() {
         setStandings(standingsData || [])
         setTeamGoals(tgData || [])
         setRivalryStats(rsData || [])
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch statistics data')
-      } finally {
         setLoading(false)
-      }
     }
     load()
   }, [])
@@ -81,11 +75,6 @@ export function DeepStatistics() {
         </div>
       </div>
 
-      {error && (
-        <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-md">
-          {error}
-        </div>
-      )}
 
       {loading ? (
         <div className="text-sm text-slate-500">Loading data...</div>

@@ -20,11 +20,9 @@ export function AchievementsAndMilestones() {
   const [seasonObjectives, setSeasonObjectives] = useState<SeasonObjective[]>([])
 
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      try {
         const [
           aData,
           paData,
@@ -47,11 +45,7 @@ export function AchievementsAndMilestones() {
         setTeamKPIs(kData || [])
         setKpiHistory(khData || [])
         setSeasonObjectives(soData || [])
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch achievements data')
-      } finally {
         setLoading(false)
-      }
     }
     load()
   }, [])
@@ -66,11 +60,6 @@ export function AchievementsAndMilestones() {
         </div>
       </div>
 
-      {error && (
-        <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-md">
-          {error}
-        </div>
-      )}
 
       {loading ? (
         <div className="text-sm text-slate-500">Loading data...</div>

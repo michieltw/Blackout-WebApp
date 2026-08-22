@@ -13,7 +13,6 @@ type GroupMember = Database['public']['Tables']['group_members']['Row']
 export function SocialFeed() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const [posts, setPosts] = useState<SocialMediaPost[]>([])
   const [media, setMedia] = useState<Media[]>([])
   const [groups, setGroups] = useState<Group[]>([])
@@ -25,7 +24,6 @@ export function SocialFeed() {
 
   useEffect(() => {
     async function load() {
-      try {
         const [
           announcementsData,
           postsData,
@@ -56,11 +54,7 @@ export function SocialFeed() {
         setAnnouncementAudiences(audienceData || [])
         setGroupMembers(groupMembersData || [])
 
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch data')
-      } finally {
         setLoading(false)
-      }
     }
     load()
   }, [])
@@ -145,11 +139,6 @@ export function SocialFeed() {
       </div>
 
       <div className="grid gap-6">
-        {error && (
-          <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-md">
-            {error}
-          </div>
-        )}
         {loading ? (
           <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm text-sm text-slate-500">
             Loading...

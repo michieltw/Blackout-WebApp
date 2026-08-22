@@ -5,6 +5,13 @@ import { Table, TableHeader, TableHead, TableBody, TableRow, TableCell } from '@
 
 type TeamStat = Database['public']['Tables']['team_season_stats_cache']['Row']
 
+
+function getGoalDiffColor(gd: number) {
+  if (gd > 0) return 'text-emerald-600';
+  if (gd < 0) return 'text-amber-600';
+  return 'text-slate-600';
+}
+
 export function Leaderboards() {
   const [standings, setStandings] = useState<TeamStat[]>([])
   const [loading, setLoading] = useState(true)
@@ -85,7 +92,7 @@ export function Leaderboards() {
                       {stat?.goals_against || 0}
                     </TableCell>
                     <TableCell className={`text-right tabular-nums font-medium ${
-                      gd > 0 ? 'text-emerald-600' : gd < 0 ? 'text-amber-600' : 'text-slate-600'
+                      getGoalDiffColor(gd)
                     }`}>
                       {gd > 0 ? `+${gd}` : gd}
                     </TableCell>

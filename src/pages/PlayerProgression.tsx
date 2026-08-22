@@ -27,11 +27,9 @@ export function PlayerProgression() {
   const [developmentMilestones, setDevelopmentMilestones] = useState<DevelopmentMilestone[]>([])
 
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      try {
         const [
           plansData,
           ratingsData,
@@ -63,11 +61,7 @@ export function PlayerProgression() {
         setPlaybooks(playbooksData || [])
         setPlaybookDiagrams(diagramsData || [])
         setDevelopmentMilestones(milestonesData || [])
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch player progression data')
-      } finally {
         setLoading(false)
-      }
     }
     load()
   }, [])
@@ -82,11 +76,6 @@ export function PlayerProgression() {
         </div>
       </div>
 
-      {error && (
-        <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-md">
-          {error}
-        </div>
-      )}
 
       {loading ? (
         <div className="text-sm text-slate-500">Loading data...</div>

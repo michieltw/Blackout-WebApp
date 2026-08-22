@@ -26,11 +26,9 @@ export function Sponsorships() {
   const [adPlacements, setAdPlacements] = useState<AdPlacement[]>([])
 
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function load() {
-      try {
         const [
           bData, rData, sData,
           adData, smData, docData,
@@ -54,15 +52,11 @@ export function Sponsorships() {
         setSponsors(sData || [])
         setAdvertisements(adData || [])
         setSocialAccounts(smData || [])
-        setDocuments(docData || [])
+        setDocuments((docData || []).slice(0, 10))
         setSponsorshipDeliverables(delivData || [])
         setSponsorshipPayments(payData || [])
         setAdPlacements(placeData || [])
-      } catch (err: any) {
-        setError(err.message || 'Failed to fetch sponsorships data')
-      } finally {
         setLoading(false)
-      }
     }
     load()
   }, [])
@@ -77,11 +71,6 @@ export function Sponsorships() {
         </div>
       </div>
 
-      {error && (
-        <div className="text-sm text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-md">
-          {error}
-        </div>
-      )}
 
       {loading ? (
         <div className="text-sm text-slate-500">Loading data...</div>
@@ -252,7 +241,7 @@ export function Sponsorships() {
                       <TableHead>Type</TableHead>
                     </TableHeader>
                     <TableBody>
-                      {documents.slice(0, 10).map((d) => (
+                      {(documents || []).map((d) => (
                         <TableRow key={d.id}>
                           <TableCell className="font-medium text-slate-900">{d.title}</TableCell>
                           <TableCell className="text-slate-500 capitalize">{d.document_type.replace(/_/g, ' ')}</TableCell>
